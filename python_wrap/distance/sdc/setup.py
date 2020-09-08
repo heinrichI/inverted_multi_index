@@ -7,7 +7,7 @@ import os
 
 extensions = [
     Extension("py_symmetric_distance_computer", ["py_symmetric_distance_computer.pyx"],
-              include_dirs=[r"C:/Users/Dima/GoogleDisk/CLionProjects/image_processing/src",
+              include_dirs=[r"c:\SourcePython\inverted_multi_index\src",
                             get_include()]
               )
 ]
