@@ -2,7 +2,11 @@ import unittest
 import numpy as np
 import sys
 
-sys.path.append("../")
+import os
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..\inverted_multi_index')))
+#sys.path.append("../")
+#from . import py_inverted_multi_index as pyimi
 import py_inverted_multi_index as pyimi
 
 
