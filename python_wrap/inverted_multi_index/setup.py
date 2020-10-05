@@ -22,4 +22,6 @@ extensions = [
 setup(
     name="build_inverted_multi_index",
     ext_modules=cythonize(extensions),
+    extra_compile_args=["-Zi", "/Od"],
+    extra_link_args=["-debug"],
 )

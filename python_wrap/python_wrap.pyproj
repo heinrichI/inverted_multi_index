@@ -1,0 +1,40 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Build">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{7b358fb3-4823-47d8-bfb5-faeb9b353d01}</ProjectGuid>
+    <ProjectHome />
+    <StartupFile>test\test-InvertedMultiIndexBuilder.py</StartupFile>
+    <SearchPath />
+    <WorkingDirectory>.</WorkingDirectory>
+    <OutputPath>.</OutputPath>
+    <ProjectTypeGuids>{888888a0-9f3d-457c-b088-3a5042f75d52}</ProjectTypeGuids>
+    <LaunchProvider>Standard Python launcher</LaunchProvider>
+    <InterpreterId />
+    <TestFramework>Pytest</TestFramework>
+    <EnableNativeCodeDebugging>True</EnableNativeCodeDebugging>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'" />
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'" />
+  <PropertyGroup>
+    <VisualStudioVersion Condition=" '$(VisualStudioVersion)' == '' ">10.0</VisualStudioVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="distance\adc\setup.py" />
+    <Compile Include="distance\sdc\setup.py" />
+    <Compile Include="inverted_multi_index\setup.py" />
+    <Compile Include="search\setup.py" />
+    <Compile Include="test\test-InvertedMultiIndexBuilder.py" />
+    <Compile Include="test\test-InvertedMultiIndexSearcher.py" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="distance\" />
+    <Folder Include="distance\adc" />
+    <Folder Include="distance\sdc" />
+    <Folder Include="inverted_multi_index" />
+    <Folder Include="search" />
+    <Folder Include="test" />
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
+</Project>
