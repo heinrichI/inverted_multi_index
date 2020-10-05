@@ -18,7 +18,7 @@ class TestInvertedMultiIndexBuilder(unittest.TestCase):
             [0, 0, 0, 1, 2, 3],
             [1, 2, 3, 0, 0, 0],
             [1, 2, 3, 1, 2, 3]
-        ], dtype=np.float32
+        ], dtype=np.int
         )
 
         subspaces_count = 3

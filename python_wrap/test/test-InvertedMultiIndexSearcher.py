@@ -20,7 +20,7 @@ class TestInvertedMultiIndexSearcher(unittest.TestCase):
             0, 0, 0, 1, 2, 3,
             1, 2, 3, 0, 0, 0,
             1, 2, 3, 1, 2, 3,
-        ], dtype=np.float32
+        ], dtype=np.int
         ).reshape((4, 3 * 2))
 
         subspaced_centrois = np.array([
