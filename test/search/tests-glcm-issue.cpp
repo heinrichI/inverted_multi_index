@@ -2,7 +2,7 @@
 // Created by Dima on 29.05.2017.
 //
 
-#include "catch.hpp"
+#include "../catch/catch.hpp"
 #include "../../src/distance/SubspacesProductEuclideanDistanceComputer.h"
 #include "../../src/util/array_utils.h"
 #include "../../src/multiindex/InvertedMultiIndex.h"
@@ -27,11 +27,12 @@ TEST_CASE("glcm issue",
 
     SECTION("survive distance") {
         SubspacesProductEuclideanDistanceComputer<float> subspacesProductEuclideanDistanceComputer(subspacedVectors);
+        #define distances_count_CONST 16
         const int distances_count_ = subspacedVectors.getTotalVectorsCount();
-
+        REQUIRE(distances_count_ == distances_count_CONST);
 
         SECTION("raw array") {
-            float subspace_distances[distances_count_];
+            float subspace_distances[distances_count_CONST];
             subspacesProductEuclideanDistanceComputer.
                     computeSquaredDistances(query_vector.get(), subspace_distances
             );

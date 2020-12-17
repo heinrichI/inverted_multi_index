@@ -1,7 +1,7 @@
 //
 // Created by Dima on 25.04.2017.
 //
-#include "catch.hpp"
+#include "../catch/catch.hpp"
 #include "../../src/multiindex/InvertedMultiIndexSearcher.h"
 #include "../../src/multiindex/InvertedMultiIndexBuilder.h"
 

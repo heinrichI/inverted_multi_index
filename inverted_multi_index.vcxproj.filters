@@ -1,0 +1,86 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="src">
+      <UniqueIdentifier>{90730b76-d7a0-4b8f-ba4e-255cb3873e43}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\distance">
+      <UniqueIdentifier>{31f7333f-32ac-46f5-b847-720b52020a2b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\multiindex">
+      <UniqueIdentifier>{7768f28e-e20a-449a-88b8-71d837aab703}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\search">
+      <UniqueIdentifier>{0466db01-9bd7-4309-8d60-a3e31bdc8963}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\util">
+      <UniqueIdentifier>{6e65e2d6-cd5d-4e07-87a9-488e24d05b8a}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\src\multiindex\InvertedMultiIndex.h">
+      <Filter>src\multiindex</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\multiindex\InvertedMultiIndexBuilder.h">
+      <Filter>src\multiindex</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\multiindex\InvertedMultiIndexSearcher.h">
+      <Filter>src\multiindex</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\multiindex\MultiIndexUtil.h">
+      <Filter>src\multiindex</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\multiindex\MultiIndexUtil2.h">
+      <Filter>src\multiindex</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\multiindex\MultiSequenceAlgorithm.h">
+      <Filter>src\multiindex</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\util\array_utils.h">
+      <Filter>src\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\util\cblas_wraps.h">
+      <Filter>src\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\util\common_defs.h">
+      <Filter>src\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\util\PriorityTuple.h">
+      <Filter>src\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\util\SubspacedScalars.h">
+      <Filter>src\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\util\SubspacedVector.h">
+      <Filter>src\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\util\SubspacedVectors.h">
+      <Filter>src\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\util\Vectors.h">
+      <Filter>src\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\search\NearestIndicesSearcher.h">
+      <Filter>src\search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\search\SubspacesProductNearestIndicesSearcher.h">
+      <Filter>src\search</Filter>
+    </ClInclude>
+    <ClInclude Include="src\distance\AsymmetricDistanceComputer.h">
+      <Filter>src\distance</Filter>
+    </ClInclude>
+    <ClInclude Include="src\distance\EuclideanDistanceComputer.h">
+      <Filter>src\distance</Filter>
+    </ClInclude>
+    <ClInclude Include="src\distance\SubspacesProductEuclideanDistanceComputer.h">
+      <Filter>src\distance</Filter>
+    </ClInclude>
+    <ClInclude Include="src\distance\SymmetricDistanceComputer.h">
+      <Filter>src\distance</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

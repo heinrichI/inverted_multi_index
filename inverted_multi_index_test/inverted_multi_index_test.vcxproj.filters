@@ -1,0 +1,72 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="catch">
+      <UniqueIdentifier>{2276ef0d-56f9-4eff-9b94-9d67b9c3ccd0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="distance">
+      <UniqueIdentifier>{d05c1f0e-c086-4b9e-83e4-75eeb20ca24e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="multiindex">
+      <UniqueIdentifier>{c568612f-9675-43a4-90c4-f756883ec457}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="search">
+      <UniqueIdentifier>{a9dba257-4a17-483a-996d-38758fcc5dc7}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\test\tests-main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\test\distance\tests-AsymmetricDistanceComputer.cpp">
+      <Filter>distance</Filter>
+    </ClCompile>
+    <ClCompile Include="..\test\distance\tests-EuclideanDistanceComputer.cpp">
+      <Filter>distance</Filter>
+    </ClCompile>
+    <ClCompile Include="..\test\distance\tests-SubspacesProductEuclideanDistanceComputer.cpp">
+      <Filter>distance</Filter>
+    </ClCompile>
+    <ClCompile Include="..\test\distance\tests-SymmetricDistanceComputer.cpp">
+      <Filter>distance</Filter>
+    </ClCompile>
+    <ClCompile Include="..\test\multiindex\tests-InvertedMultiIndexBuilder.cpp">
+      <Filter>multiindex</Filter>
+    </ClCompile>
+    <ClCompile Include="..\test\multiindex\tests-MultiIndexUtil.cpp">
+      <Filter>multiindex</Filter>
+    </ClCompile>
+    <ClCompile Include="..\test\multiindex\tests-MultiSequenceAlgorithm.cpp">
+      <Filter>multiindex</Filter>
+    </ClCompile>
+    <ClCompile Include="..\test\search\tests-glcm-issue.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\test\search\tests-InvertedMultiIndexSearcher.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\test\search\tests-NearestIndicesSearcher.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\test\search\tests-SubspacesProductNearestIndicesSearcher.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\test\catch\catch.hpp">
+      <Filter>catch</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

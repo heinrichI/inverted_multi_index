@@ -37,7 +37,7 @@ public:
         return total_vectors_count;
     }
 
-    int getTotalComponentsCount() const {
+    const int getTotalComponentsCount() const {
         int total_components_count = subspaces_count * vectors_count_in_each_subspace * subspace_vector_dim;
         return total_components_count;
     }

@@ -2,7 +2,7 @@
 // Created by dima on 08.04.17.
 //
 
-#include "catch.hpp"
+#include "../catch/catch.hpp"
 #include "../../src/multiindex/invertedMultiIndex.h"
 #include "../../src/multiindex/InvertedMultiIndexBuilder.h"
 #include "../../src/util/array_utils.h"
