@@ -46,7 +46,7 @@ TEST_CASE("compute computePairwiseSquaredDistances from query_vectors to base_ve
     REQUIRE(answer_vector2 == right_answer_vector2);
 }
 
-/*TEST_CASE("survive big arrays distances computation", "[EuclideanDistanceComputer][distance]") {
+TEST_CASE("survive big arrays distances computation", "[EuclideanDistanceComputer][distance]") {
     const int base_vectors_count = 1 << 14;
     const int base_vectors_dim = 1 << 16;
 //    float *a = new float[base_vectors_count * base_vectors_dim];
@@ -73,4 +73,4 @@ TEST_CASE("compute computePairwiseSquaredDistances from query_vectors to base_ve
     for (size_t i = 0; i < distances_count; i++) {
         REQUIRE(calculated_distances[i] == Approx(truth_distances[i]));
     }
-}*/
+}

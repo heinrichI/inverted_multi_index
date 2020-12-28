@@ -27,7 +27,7 @@ TEST_CASE("glcm issue",
 
     SECTION("survive distance") {
         SubspacesProductEuclideanDistanceComputer<float> subspacesProductEuclideanDistanceComputer(subspacedVectors);
-        #define distances_count_CONST 16
+        #define distances_count_CONST 512
         const int distances_count_ = subspacedVectors.getTotalVectorsCount();
         REQUIRE(distances_count_ == distances_count_CONST);
 
