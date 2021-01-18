@@ -8,10 +8,10 @@ import os
 extensions = [
     Extension("py_inverted_multi_index", ["py_inverted_multi_index.pyx"],
               include_dirs=[r"c:\SourceOpen\inverted_multi_indexMy\src",
-                            "c:\SourceOpen\inverted_multi_indexMy\OpenBLAS-v0.2.19-Win64-int32\include",
+                            r"c:\SourceOpen\inverted_multi_indexMy\OpenBLAS-v0.2.19-Win64-int32\include",
                             get_include()],
-              libraries=[r'libopenblas.dll'],
-              library_dirs=[r'c:\SourceOpen\inverted_multi_indexMy\OpenBLAS-v0.2.19-Win64-int32\lib'],
+              libraries=[r'libopenblas'],
+              library_dirs=[r'c:\SourceOpen\inverted_multi_indexMy\OpenBLAS-VS\RelWithDebInfo'],
               extra_compile_args=["-Zi", "/Od"],
               extra_link_args=["-debug"],
               ),
