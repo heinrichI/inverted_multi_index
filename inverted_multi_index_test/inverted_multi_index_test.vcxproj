@@ -80,13 +80,13 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>c:\SourceOpen\inverted_multi_indexMy\OpenBLAS-v0.2.19-Win64-int32\include\;$(IncludePath)</IncludePath>
-    <LibraryPath>c:\SourceOpen\inverted_multi_indexMy\xianyi-OpenBLAS-9a7e0ec\build\lib\Debug\;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)OpenBLAS-v0.2.19-Win64-int32\include\;c:\SourceOpen\inverted_multi_indexMy\OpenBLAS-v0.2.19-Win64-int32\include\;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)OpenBLAS-VS\Debug\;c:\SourceOpen\inverted_multi_indexMy\xianyi-OpenBLAS-9a7e0ec\build\lib\Debug\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>c:\SourceOpen\inverted_multi_indexMy\OpenBLAS-v0.2.19-Win64-int32\include\;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\SourceOpen\inverted_multi_indexMy\xianyi-OpenBLAS-9a7e0ec\build\lib\RelWithDebInfo;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)OpenBLAS-v0.2.19-Win64-int32\include\;c:\SourceOpen\inverted_multi_indexMy\OpenBLAS-v0.2.19-Win64-int32\include\;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)OpenBLAS-VS\RelWithDebInfo\;C:\SourceOpen\inverted_multi_indexMy\xianyi-OpenBLAS-9a7e0ec\build\lib\RelWithDebInfo;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -139,6 +139,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
