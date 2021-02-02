@@ -139,26 +139,26 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\src\multiindex\InvertedMultiIndex.h" />
-    <ClInclude Include="..\src\multiindex\InvertedMultiIndexBuilder.h" />
-    <ClInclude Include="..\src\multiindex\InvertedMultiIndexSearcher.h" />
-    <ClInclude Include="..\src\multiindex\MultiIndexUtil.h" />
-    <ClInclude Include="..\src\multiindex\MultiIndexUtil2.h" />
-    <ClInclude Include="..\src\multiindex\MultiSequenceAlgorithm.h" />
-    <ClInclude Include="..\src\search\NearestIndicesSearcher.h" />
-    <ClInclude Include="..\src\search\SubspacesProductNearestIndicesSearcher.h" />
-    <ClInclude Include="..\src\util\array_utils.h" />
-    <ClInclude Include="..\src\util\cblas_wraps.h" />
-    <ClInclude Include="..\src\util\common_defs.h" />
-    <ClInclude Include="..\src\util\PriorityTuple.h" />
-    <ClInclude Include="..\src\util\SubspacedScalars.h" />
-    <ClInclude Include="..\src\util\SubspacedVector.h" />
-    <ClInclude Include="..\src\util\SubspacedVectors.h" />
-    <ClInclude Include="..\src\util\Vectors.h" />
     <ClInclude Include="src\distance\AsymmetricDistanceComputer.h" />
     <ClInclude Include="src\distance\EuclideanDistanceComputer.h" />
     <ClInclude Include="src\distance\SubspacesProductEuclideanDistanceComputer.h" />
     <ClInclude Include="src\distance\SymmetricDistanceComputer.h" />
+    <ClInclude Include="src\multiindex\InvertedMultiIndex.h" />
+    <ClInclude Include="src\multiindex\InvertedMultiIndexBuilder.h" />
+    <ClInclude Include="src\multiindex\InvertedMultiIndexSearcher.h" />
+    <ClInclude Include="src\multiindex\MultiIndexUtil.h" />
+    <ClInclude Include="src\multiindex\MultiIndexUtil2.h" />
+    <ClInclude Include="src\multiindex\MultiSequenceAlgorithm.h" />
+    <ClInclude Include="src\search\NearestIndicesSearcher.h" />
+    <ClInclude Include="src\search\SubspacesProductNearestIndicesSearcher.h" />
+    <ClInclude Include="src\util\array_utils.h" />
+    <ClInclude Include="src\util\cblas_wraps.h" />
+    <ClInclude Include="src\util\common_defs.h" />
+    <ClInclude Include="src\util\PriorityTuple.h" />
+    <ClInclude Include="src\util\SubspacedScalars.h" />
+    <ClInclude Include="src\util\SubspacedVector.h" />
+    <ClInclude Include="src\util\SubspacedVectors.h" />
+    <ClInclude Include="src\util\Vectors.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

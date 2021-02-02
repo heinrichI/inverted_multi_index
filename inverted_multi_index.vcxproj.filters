@@ -22,54 +22,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\src\multiindex\InvertedMultiIndex.h">
-      <Filter>src\multiindex</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\multiindex\InvertedMultiIndexBuilder.h">
-      <Filter>src\multiindex</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\multiindex\InvertedMultiIndexSearcher.h">
-      <Filter>src\multiindex</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\multiindex\MultiIndexUtil.h">
-      <Filter>src\multiindex</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\multiindex\MultiIndexUtil2.h">
-      <Filter>src\multiindex</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\multiindex\MultiSequenceAlgorithm.h">
-      <Filter>src\multiindex</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\util\array_utils.h">
-      <Filter>src\util</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\util\cblas_wraps.h">
-      <Filter>src\util</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\util\common_defs.h">
-      <Filter>src\util</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\util\PriorityTuple.h">
-      <Filter>src\util</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\util\SubspacedScalars.h">
-      <Filter>src\util</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\util\SubspacedVector.h">
-      <Filter>src\util</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\util\SubspacedVectors.h">
-      <Filter>src\util</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\util\Vectors.h">
-      <Filter>src\util</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\search\NearestIndicesSearcher.h">
-      <Filter>src\search</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\search\SubspacesProductNearestIndicesSearcher.h">
-      <Filter>src\search</Filter>
-    </ClInclude>
     <ClInclude Include="src\distance\AsymmetricDistanceComputer.h">
       <Filter>src\distance</Filter>
     </ClInclude>
@@ -81,6 +33,54 @@
     </ClInclude>
     <ClInclude Include="src\distance\SymmetricDistanceComputer.h">
       <Filter>src\distance</Filter>
+    </ClInclude>
+    <ClInclude Include="src\multiindex\InvertedMultiIndex.h">
+      <Filter>src\multiindex</Filter>
+    </ClInclude>
+    <ClInclude Include="src\multiindex\InvertedMultiIndexBuilder.h">
+      <Filter>src\multiindex</Filter>
+    </ClInclude>
+    <ClInclude Include="src\multiindex\InvertedMultiIndexSearcher.h">
+      <Filter>src\multiindex</Filter>
+    </ClInclude>
+    <ClInclude Include="src\multiindex\MultiIndexUtil.h">
+      <Filter>src\multiindex</Filter>
+    </ClInclude>
+    <ClInclude Include="src\multiindex\MultiIndexUtil2.h">
+      <Filter>src\multiindex</Filter>
+    </ClInclude>
+    <ClInclude Include="src\multiindex\MultiSequenceAlgorithm.h">
+      <Filter>src\multiindex</Filter>
+    </ClInclude>
+    <ClInclude Include="src\search\NearestIndicesSearcher.h">
+      <Filter>src\search</Filter>
+    </ClInclude>
+    <ClInclude Include="src\search\SubspacesProductNearestIndicesSearcher.h">
+      <Filter>src\search</Filter>
+    </ClInclude>
+    <ClInclude Include="src\util\array_utils.h">
+      <Filter>src\util</Filter>
+    </ClInclude>
+    <ClInclude Include="src\util\cblas_wraps.h">
+      <Filter>src\util</Filter>
+    </ClInclude>
+    <ClInclude Include="src\util\common_defs.h">
+      <Filter>src\util</Filter>
+    </ClInclude>
+    <ClInclude Include="src\util\PriorityTuple.h">
+      <Filter>src\util</Filter>
+    </ClInclude>
+    <ClInclude Include="src\util\SubspacedScalars.h">
+      <Filter>src\util</Filter>
+    </ClInclude>
+    <ClInclude Include="src\util\SubspacedVector.h">
+      <Filter>src\util</Filter>
+    </ClInclude>
+    <ClInclude Include="src\util\SubspacedVectors.h">
+      <Filter>src\util</Filter>
+    </ClInclude>
+    <ClInclude Include="src\util\Vectors.h">
+      <Filter>src\util</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
