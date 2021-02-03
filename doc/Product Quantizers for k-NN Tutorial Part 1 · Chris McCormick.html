@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<!-- saved from url=(0069)https://mccormickml.com/2017/10/13/product-quantizer-tutorial-part-1/ -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>
+    
+      Product Quantizers for k-NN Tutorial Part 1 · Chris McCormick
+    
+  </title>
+
+  <link rel="stylesheet" href="./Product Quantizers for k-NN Tutorial Part 1 · Chris McCormick_files/styles.css">
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="https://mccormickml.com/public/apple-touch-icon-precomposed.png">
+  <link rel="shortcut icon" href="https://mccormickml.com/public/favicon.ico">
+  <link rel="alternate" type="application/atom+xml" title="Chris McCormick" href="https://mccormickml.com/atom.xml">
+
+  <!-- Adding support for MathJax -->
+  <script async="" src="./Product Quantizers for k-NN Tutorial Part 1 · Chris McCormick_files/analytics.js.Без названия"></script><script src="./Product Quantizers for k-NN Tutorial Part 1 · Chris McCormick_files/MathJax.js.Без названия" id=""></script>
+
+<script src="./Product Quantizers for k-NN Tutorial Part 1 · Chris McCormick_files/embed.js.Без названия" data-timestamp="1612279673698"></script><link rel="prefetch" as="style" href="https://c.disquscdn.com/next/embed/styles/lounge.0f8247d0689845c86c5bfcd8efd31a28.css"><link rel="prefetch" as="script" href="https://c.disquscdn.com/next/embed/common.bundle.38ea27189bdb723eae3dabf5bc7b8c0b.js"><link rel="prefetch" as="script" href="https://c.disquscdn.com/next/embed/lounge.bundle.ec325e7c33ae32f082a2c57fe0c859bd.js"><link rel="prefetch" as="script" href="https://disqus.com/next/config.js"><style type="text/css">.MathJax_Hover_Frame {border-radius: .25em; -webkit-border-radius: .25em; -moz-border-radius: .25em; -khtml-border-radius: .25em; box-shadow: 0px 0px 15px #83A; -webkit-box-shadow: 0px 0px 15px #83A; -moz-box-shadow: 0px 0px 15px #83A; -khtml-box-shadow: 0px 0px 15px #83A; border: 1px solid #A6D ! important; display: inline-block; position: absolute}
+.MathJax_Menu_Button .MathJax_Hover_Arrow {position: absolute; cursor: pointer; display: inline-block; border: 2px solid #AAA; border-radius: 4px; -webkit-border-radius: 4px; -moz-border-radius: 4px; -khtml-border-radius: 4px; font-family: 'Courier New',Courier; font-size: 9px; color: #F0F0F0}
+.MathJax_Menu_Button .MathJax_Hover_Arrow span {display: block; background-color: #AAA; border: 1px solid; border-radius: 3px; line-height: 0; padding: 4px}
+.MathJax_Hover_Arrow:hover {color: white!important; border: 2px solid #CCC!important}
+.MathJax_Hover_Arrow:hover span {background-color: #CCC!important}
+</style><style type="text/css">#MathJax_About {position: fixed; left: 50%; width: auto; text-align: center; border: 3px outset; padding: 1em 2em; background-color: #DDDDDD; color: black; cursor: default; font-family: message-box; font-size: 120%; font-style: normal; text-indent: 0; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; z-index: 201; border-radius: 15px; -webkit-border-radius: 15px; -moz-border-radius: 15px; -khtml-border-radius: 15px; box-shadow: 0px 10px 20px #808080; -webkit-box-shadow: 0px 10px 20px #808080; -moz-box-shadow: 0px 10px 20px #808080; -khtml-box-shadow: 0px 10px 20px #808080; filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color='gray', Positive='true')}
+#MathJax_About.MathJax_MousePost {outline: none}
+.MathJax_Menu {position: absolute; background-color: white; color: black; width: auto; padding: 2px; border: 1px solid #CCCCCC; margin: 0; cursor: default; font: menu; text-align: left; text-indent: 0; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; z-index: 201; box-shadow: 0px 10px 20px #808080; -webkit-box-shadow: 0px 10px 20px #808080; -moz-box-shadow: 0px 10px 20px #808080; -khtml-box-shadow: 0px 10px 20px #808080; filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color='gray', Positive='true')}
+.MathJax_MenuItem {padding: 2px 2em; background: transparent}
+.MathJax_MenuArrow {position: absolute; right: .5em; padding-top: .25em; color: #666666; font-size: .75em}
+.MathJax_MenuActive .MathJax_MenuArrow {color: white}
+.MathJax_MenuArrow.RTL {left: .5em; right: auto}
+.MathJax_MenuCheck {position: absolute; left: .7em}
+.MathJax_MenuCheck.RTL {right: .7em; left: auto}
+.MathJax_MenuRadioCheck {position: absolute; left: 1em}
+.MathJax_MenuRadioCheck.RTL {right: 1em; left: auto}
+.MathJax_MenuLabel {padding: 2px 2em 4px 1.33em; font-style: italic}
+.MathJax_MenuRule {border-top: 1px solid #CCCCCC; margin: 4px 1px 0px}
+.MathJax_MenuDisabled {color: GrayText}
+.MathJax_MenuActive {background-color: Highlight; color: HighlightText}
+.MathJax_MenuDisabled:focus, .MathJax_MenuLabel:focus {background-color: #E8E8E8}
+.MathJax_ContextMenu:focus {outline: none}
+.MathJax_ContextMenu .MathJax_MenuItem:focus {outline: none}
+#MathJax_AboutClose {top: .2em; right: .2em}
+.MathJax_Menu .MathJax_MenuClose {top: -10px; left: -10px}
+.MathJax_MenuClose {position: absolute; cursor: pointer; display: inline-block; border: 2px solid #AAA; border-radius: 18px; -webkit-border-radius: 18px; -moz-border-radius: 18px; -khtml-border-radius: 18px; font-family: 'Courier New',Courier; font-size: 24px; color: #F0F0F0}
+.MathJax_MenuClose span {display: block; background-color: #AAA; border: 1.5px solid; border-radius: 18px; -webkit-border-radius: 18px; -moz-border-radius: 18px; -khtml-border-radius: 18px; line-height: 0; padding: 8px 0 6px}
+.MathJax_MenuClose:hover {color: white!important; border: 2px solid #CCC!important}
+.MathJax_MenuClose:hover span {background-color: #CCC!important}
+.MathJax_MenuClose:hover:focus {outline: none}
+</style><style type="text/css">.MathJax_Preview .MJXf-math {color: inherit!important}
+</style><style type="text/css">.MJX_Assistive_MathML {position: absolute!important; top: 0; left: 0; clip: rect(1px, 1px, 1px, 1px); padding: 1px 0 0 0!important; border: 0!important; height: 1px!important; width: 1px!important; overflow: hidden!important; display: block!important; -webkit-touch-callout: none; -webkit-user-select: none; -khtml-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none}
+.MJX_Assistive_MathML.MJX_Assistive_MathML_Block {width: 100%!important}
+</style><style type="text/css">#MathJax_Zoom {position: absolute; background-color: #F0F0F0; overflow: auto; display: block; z-index: 301; padding: .5em; border: 1px solid black; margin: 0; font-weight: normal; font-style: normal; text-align: left; text-indent: 0; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; -webkit-box-sizing: content-box; -moz-box-sizing: content-box; box-sizing: content-box; box-shadow: 5px 5px 15px #AAAAAA; -webkit-box-shadow: 5px 5px 15px #AAAAAA; -moz-box-shadow: 5px 5px 15px #AAAAAA; -khtml-box-shadow: 5px 5px 15px #AAAAAA; filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color='gray', Positive='true')}
+#MathJax_ZoomOverlay {position: absolute; left: 0; top: 0; z-index: 300; display: inline-block; width: 100%; height: 100%; border: 0; padding: 0; margin: 0; background-color: white; opacity: 0; filter: alpha(opacity=0)}
+#MathJax_ZoomFrame {position: relative; display: inline-block; height: 0; width: 0}
+#MathJax_ZoomEventTrap {position: absolute; left: 0; top: 0; z-index: 302; display: inline-block; border: 0; padding: 0; margin: 0; background-color: white; opacity: 0; filter: alpha(opacity=0)}
+</style><style type="text/css">.MathJax_Preview {color: #888}
+#MathJax_Message {position: fixed; left: 1em; bottom: 1.5em; background-color: #E6E6E6; border: 1px solid #959595; margin: 0px; padding: 2px 8px; z-index: 102; color: black; font-size: 80%; width: auto; white-space: nowrap}
+#MathJax_MSIE_Frame {position: absolute; top: 0; left: 0; width: 0px; z-index: 101; border: 0px; margin: 0px; padding: 0px}
+.MathJax_Error {color: #CC0000; font-style: italic}
+</style><style type="text/css">.MJXp-script {font-size: .8em}
+.MJXp-right {-webkit-transform-origin: right; -moz-transform-origin: right; -ms-transform-origin: right; -o-transform-origin: right; transform-origin: right}
+.MJXp-bold {font-weight: bold}
+.MJXp-italic {font-style: italic}
+.MJXp-scr {font-family: MathJax_Script,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-frak {font-family: MathJax_Fraktur,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-sf {font-family: MathJax_SansSerif,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-cal {font-family: MathJax_Caligraphic,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-mono {font-family: MathJax_Typewriter,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-largeop {font-size: 150%}
+.MJXp-largeop.MJXp-int {vertical-align: -.2em}
+.MJXp-math {display: inline-block; line-height: 1.2; text-indent: 0; font-family: 'Times New Roman',Times,STIXGeneral,serif; white-space: nowrap; border-collapse: collapse}
+.MJXp-display {display: block; text-align: center; margin: 1em 0}
+.MJXp-math span {display: inline-block}
+.MJXp-box {display: block!important; text-align: center}
+.MJXp-box:after {content: " "}
+.MJXp-rule {display: block!important; margin-top: .1em}
+.MJXp-char {display: block!important}
+.MJXp-mo {margin: 0 .15em}
+.MJXp-mfrac {margin: 0 .125em; vertical-align: .25em}
+.MJXp-denom {display: inline-table!important; width: 100%}
+.MJXp-denom > * {display: table-row!important}
+.MJXp-surd {vertical-align: top}
+.MJXp-surd > * {display: block!important}
+.MJXp-script-box > *  {display: table!important; height: 50%}
+.MJXp-script-box > * > * {display: table-cell!important; vertical-align: top}
+.MJXp-script-box > *:last-child > * {vertical-align: bottom}
+.MJXp-script-box > * > * > * {display: block!important}
+.MJXp-mphantom {visibility: hidden}
+.MJXp-munderover {display: inline-table!important}
+.MJXp-over {display: inline-block!important; text-align: center}
+.MJXp-over > * {display: block!important}
+.MJXp-munderover > * {display: table-row!important}
+.MJXp-mtable {vertical-align: .25em; margin: 0 .125em}
+.MJXp-mtable > * {display: inline-table!important; vertical-align: middle}
+.MJXp-mtr {display: table-row!important}
+.MJXp-mtd {display: table-cell!important; text-align: center; padding: .5em 0 0 .5em}
+.MJXp-mtr > .MJXp-mtd:first-child {padding-left: 0}
+.MJXp-mtr:first-child > .MJXp-mtd {padding-top: 0}
+.MJXp-mlabeledtr {display: table-row!important}
+.MJXp-mlabeledtr > .MJXp-mtd:first-child {padding-left: 0}
+.MJXp-mlabeledtr:first-child > .MJXp-mtd {padding-top: 0}
+.MJXp-merror {background-color: #FFFF88; color: #CC0000; border: 1px solid #CC0000; padding: 1px 3px; font-style: normal; font-size: 90%}
+.MJXp-scale0 {-webkit-transform: scaleX(.0); -moz-transform: scaleX(.0); -ms-transform: scaleX(.0); -o-transform: scaleX(.0); transform: scaleX(.0)}
+.MJXp-scale1 {-webkit-transform: scaleX(.1); -moz-transform: scaleX(.1); -ms-transform: scaleX(.1); -o-transform: scaleX(.1); transform: scaleX(.1)}
+.MJXp-scale2 {-webkit-transform: scaleX(.2); -moz-transform: scaleX(.2); -ms-transform: scaleX(.2); -o-transform: scaleX(.2); transform: scaleX(.2)}
+.MJXp-scale3 {-webkit-transform: scaleX(.3); -moz-transform: scaleX(.3); -ms-transform: scaleX(.3); -o-transform: scaleX(.3); transform: scaleX(.3)}
+.MJXp-scale4 {-webkit-transform: scaleX(.4); -moz-transform: scaleX(.4); -ms-transform: scaleX(.4); -o-transform: scaleX(.4); transform: scaleX(.4)}
+.MJXp-scale5 {-webkit-transform: scaleX(.5); -moz-transform: scaleX(.5); -ms-transform: scaleX(.5); -o-transform: scaleX(.5); transform: scaleX(.5)}
+.MJXp-scale6 {-webkit-transform: scaleX(.6); -moz-transform: scaleX(.6); -ms-transform: scaleX(.6); -o-transform: scaleX(.6); transform: scaleX(.6)}
+.MJXp-scale7 {-webkit-transform: scaleX(.7); -moz-transform: scaleX(.7); -ms-transform: scaleX(.7); -o-transform: scaleX(.7); transform: scaleX(.7)}
+.MJXp-scale8 {-webkit-transform: scaleX(.8); -moz-transform: scaleX(.8); -ms-transform: scaleX(.8); -o-transform: scaleX(.8); transform: scaleX(.8)}
+.MJXp-scale9 {-webkit-transform: scaleX(.9); -moz-transform: scaleX(.9); -ms-transform: scaleX(.9); -o-transform: scaleX(.9); transform: scaleX(.9)}
+.MathJax_PHTML .noError {vertical-align: ; font-size: 90%; text-align: left; color: black; padding: 1px 3px; border: 1px solid}
+</style><script src="./Product Quantizers for k-NN Tutorial Part 1 · Chris McCormick_files/alfie_v4.63f1ab6d6b9d5807dc0c94ef3fe0b851.js.Без названия" async="" charset="UTF-8"></script></head>
+
+
+  <body><div id="MathJax_Message" style="display: none;"></div>
+
+    <div class="container content">
+      <header class="masthead">
+        <h3 class="masthead-title">
+          <a href="https://mccormickml.com/" title="Home">Chris McCormick</a>
+
+          <!--- Display the About, Archive, etc. pages in the header --->
+          
+              &nbsp;&nbsp;&nbsp;<small><a href="https://mccormickml.com/about/">About</a></small>
+          
+              &nbsp;&nbsp;&nbsp;<small><a href="https://mccormickml.com/tutorials/">Tutorials</a></small>
+          
+              &nbsp;&nbsp;&nbsp;<small><a href="https://www.chrismccormick.ai/store">Store</a></small>
+          
+              &nbsp;&nbsp;&nbsp;<small><a href="https://mccormickml.com/archive/">Archive</a></small>
+          
+
+        </h3>
+        <!---- I could use this to include the tag line, but it looks cluttered...
+        <h3 class="masthead-title">
+             <small>Machine Learning Tutorials and Insights</small>
+        </h3>
+        ----->
+        
+        <small>New BERT eBook + 11 Application Notebooks! → <a href="https://bit.ly/2RkiwnL">The BERT Collection</a></small>
+        
+
+      </header>
+
+      <main>
+        <article class="post">
+  <h1 class="post-title">Product Quantizers for k-NN Tutorial Part 1</h1>
+  <time datetime="2017-10-13T08:00:00-07:00" class="post-date">13 Oct 2017</time>
+  <ul id="markdown-toc">
+  <li><a href="https://mccormickml.com/2017/10/13/product-quantizer-tutorial-part-1/#exhaustive-search-with-approximate-distances" id="markdown-toc-exhaustive-search-with-approximate-distances">Exhaustive Search with Approximate Distances</a></li>
+  <li><a href="https://mccormickml.com/2017/10/13/product-quantizer-tutorial-part-1/#explanation-by-example" id="markdown-toc-explanation-by-example">Explanation by Example</a></li>
+  <li><a href="https://mccormickml.com/2017/10/13/product-quantizer-tutorial-part-1/#dataset-compression" id="markdown-toc-dataset-compression">Dataset Compression</a></li>
+  <li><a href="https://mccormickml.com/2017/10/13/product-quantizer-tutorial-part-1/#nearest-neighbor-search" id="markdown-toc-nearest-neighbor-search">Nearest Neighbor Search</a></li>
+  <li><a href="https://mccormickml.com/2017/10/13/product-quantizer-tutorial-part-1/#compression-terminology" id="markdown-toc-compression-terminology">Compression Terminology</a></li>
+  <li><a href="https://mccormickml.com/2017/10/13/product-quantizer-tutorial-part-1/#pre-filtering" id="markdown-toc-pre-filtering">Pre-filtering</a></li>
+</ul>
+
+<p>A product quantizer is a type of “vector quantizer” (I’ll explain what that means later on!) which can be used to accelerate approximate nearest neighbor search. They’re of particular interest because they are a key element of the popular <a href="https://code.facebook.com/posts/1373769912645926/faiss-a-library-for-efficient-similarity-search/">Facebook AI Similarity Search (FAISS) library</a> released in March 2017. In part 1 of this tutorial, I’ll be providing an explanation of a product quantizer in its most basic form, as used for implementing approximate nearest neighbors search (ANN). Then in <a href="http://mccormickml.com/2017/10/22/product-quantizer-tutorial-part-2/">part 2</a> I explain the “IndexIVFPQ” index from FAISS, which adds a couple more features on top of the basic product quantizer.</p>
+
+<h2 id="exhaustive-search-with-approximate-distances">Exhaustive Search with Approximate Distances</h2>
+<p>Unlike tree-based indexes used for ANN, a k-NN search with a product quantizer alone still performs an “exhaustive search”, meaning that a product quantizer still requires comparing the query vector to every vector in the database. The key is that it <em>approximates</em> and <em>greatly simplifies</em> the distance calculations.</p>
+
+<p>(Note that the IndexIVFPQ index in FAISS <em>does</em> perform pre-filtering of the dataset before using the product quantizer–I cover this in part 2).</p>
+
+<h2 id="explanation-by-example">Explanation by Example</h2>
+<p>The authors of the product quantizer approach have a background in signal processing and compression techniques, so their language and terminology probably feels foreign if your focus is machine learning. Fortunately, if you’re familiar with k-means clustering (and we dispense with all of the compression nomenclature!) you can understand the basics of product quantizers easily with an example. Afterwards, we’ll come back and look at the compression terminology.</p>
+
+<h2 id="dataset-compression">Dataset Compression</h2>
+<p>Let’s say you have a collection of 50,000 images, and you’ve already performed some feature extraction with a convolutional neural network, and now you have a dataset of 50,000 feature vectors with 1,024 components each.</p>
+
+<p><img src="./Product Quantizers for k-NN Tutorial Part 1 · Chris McCormick_files/image_vectors.png" alt="Image Vector Dataset"></p>
+
+<p>The first thing we’re going to do is compress our dataset. The number of vectors will stay the same, but we’ll reduce the amount of storage required for each vector. Note that what we’re going to do is <em>not the same</em> as “dimensionality reduction”! This is because the values in the compressed vectors are actually <em>symbolic</em> rather than <em>numeric</em>, so we can’t compare the compressed vectors to one another <em>directly</em>.</p>
+
+<p>Two important benefits to compressing the dataset are that (1) memory access times are generally the limiting factor on processing speed, and (2) sheer memory capacity can be a problem for big datasets.</p>
+
+<p>Here’s how the compression works. For our example we’re going to chop up the vectors into 8 sub-vectors, each of length 128 (8 sub vectors x 128 components = 1,024 components). This divides our dataset into 8 matrices that are [50K x 128] each.</p>
+
+<p><img src="./Product Quantizers for k-NN Tutorial Part 1 · Chris McCormick_files/vector_slice.png" alt="Vectors sliced into subvectors"></p>
+
+<p>We’re going to run k-means clustering separately on each of these 8 matrices with k = 256. Now for each of the 8 subsections of the vector we have a set of 256 centroids–we have 8 groups of 256 centroids each.</p>
+
+<p><img src="./Product Quantizers for k-NN Tutorial Part 1 · Chris McCormick_files/kmeans_clustering.png" alt="K-Means clustering run on subvectors"></p>
+
+<p>These centroids are like “prototypes”. They represent the most commonly occurring patterns in the dataset sub-vectors.</p>
+
+<p>We’re going to use these centroids to compress our 1 million vector dataset. Effectively, we’re going to replace each subregion of a vector with the closest matching centroid, giving us a vector that’s different from the original, but hopefully still close.</p>
+
+<p>Doing this allows us to store the vectors much more efficiently—instead of storing the original floating point values, we’re just going to store cluster ids. For each subvector, we find the closest centroid, and store the id of that centroid.</p>
+
+<p>Each vector is going to be replaced by a sequence of 8 centroid ids. I think you can guess how we pick the centroid ids–you take each subvector, find the closest centroid, and replace it with that centroid’s id.</p>
+
+<p>Note that we learn a <em>different set of centroids</em> for each subsection. And when we replace a subvector with the id of the closest centroid, we are only comparing against the 256 centroids for <em>that subsection</em> of the vector.</p>
+
+<p>Because there are only 256 centroids, we only need 8-bits to store a centroid id. Each vector, which initially was a vector of 1,024 32-bit floats (4,096 bytes) is now a sequence of eight 8-bit integers (8 bytes total per vector!).</p>
+
+<p><img src="./Product Quantizers for k-NN Tutorial Part 1 · Chris McCormick_files/compression.png" alt="Compressed vector representation"></p>
+
+<h2 id="nearest-neighbor-search">Nearest Neighbor Search</h2>
+<p>Great. We’ve compressed the vectors, but now you can’t calculate L2 distance directly on the compressed vectors–the distance between centroid ids is arbitrary and meaningless! (This is what differentiates compression from dimensionality reduction).</p>
+
+<p>Here’s how we perform a nearest neighbor search. It’s still going to be an exhaustive search (we’re still going to calculate a distance against all of the vectors and then sort the distances) but we’re going to be able to calculate the distances much more efficiently using just table look-ups and some addition.</p>
+
+<p>Let’s say we have a query vector and we want to find its nearest neighbors.</p>
+
+<p>One way to do this (that isn’t so smart) would be to decompress the dataset vectors, and then calculate the L2 distances. That is, reconstruct the vectors by concatenating the different centroids. We’re effectively going to do this, but in a much more computationally efficient way than actually decompressing the vectors.</p>
+
+<p>First, we’re going to calculate the squared L2 distance between each subsection of our vector and each of the 256 centroids for that subsection.</p>
+
+<p>This means building a table of subvector distances with 256 rows (one for each centroid) and 8 columns (one foreach subsection). How much effort is it to build this table? If you think about it, this requires the same number of math operations as computing L2 distances between our query vector and 256 dataset vectors.</p>
+
+<p>Once we have this table, we can start calculating approximate distance values for each of the 50K database vectors.</p>
+
+<p>Remember that each database vector is now just a sequence of 8 centroid ids. To calculate the approximate  distance between a given database vector and the query vector, we just use those centroid id’s to lookup the partial distances in the table, and sum those up!</p>
+
+<p>Does it really work to just sum up those partial values? Yes! Remember that we’re just working with squared L2 distances, meaning no square root operation. Squared L2 is calculated by summing up all of squared differences between each component, so it doesn’t matter what order you perform those additions in.</p>
+
+<p>So this table approach gives us the same result as calculating distances against the decompressed vectors, but with much lower compute cost.</p>
+
+<p>The final step is the same as an ordinary nearest neighbor search—we sort the distances to find the smallest distances; these are the nearest neighbors. And that’s it!</p>
+
+<h2 id="compression-terminology">Compression Terminology</h2>
+<p>Now that you understand how PQs work, it’s easy to go back and learn the terminology.</p>
+
+<p>A quantizer, in the broadest sense, is something that reduces the number of possible values that a variable has. A good example would be building a lookup table to reduce the number of colors in an image. Find the most common 256 colors, and put them in a table mapping a 24-bit RGB color value down to an 8-bit integer.</p>
+
+<p>When we took the first 128 values of our database vectors (the first of the 8 subsections) and clustered them to learn 256 centroids, these 256 centroids form what’s refered to as a “codebook”. Each centroid (a floating point vector with 128 components) is called a “code”.</p>
+
+<p>Since these centroids are what’s used to represent the database vectors, the codes are also referred to as “reproduction values” or “reconstruction values”. You can reconstruct a database vector from its sequence of centroid if ids by concatenating the corresponding codes (centroids).</p>
+
+<p>Since we ran k-means separately on each of the 8 subsections, we actually created eight separate code books.</p>
+
+<p>With these 8 codebooks, though, we can combine the codes to create 256^8 possible vectors! So, in effect, we’ve created one <em>very large</em> codebook with 256^8 codes. Learning and storing a single codebook of that size directly is impossible, so that’s the magic of the product quantizer.</p>
+
+<h2 id="pre-filtering">Pre-filtering</h2>
+<p>In <a href="http://mccormickml.com/2017/10/22/product-quantizer-tutorial-part-2/">part 2 of this tutorial</a>, we’ll cover the IndexIVFPQ from FAISS, which uses a product quantizer but also partitions the dataset so that you only have to search through portions of it for each query. Though FAISS was just released in 2017, the product quantizer approach and the techniques used in the IndexIVFPQ were first introduced in their popular <a href="https://lear.inrialpes.fr/pubs/2011/JDS11/jegou_searching_with_quantization.pdf">2011 paper</a>.</p>
+
+
+
+  <script async="" src="./Product Quantizers for k-NN Tutorial Part 1 · Chris McCormick_files/f.txt"></script>
+<!-- Responsive Unit - End of Post, Colorful -->
+<ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-9176681289361741" data-ad-slot="8514028518" data-ad-format="auto"></ins>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+  
+  
+  <div id="disqus_thread"><iframe id="dsq-app3871" name="dsq-app3871" allowtransparency="true" frameborder="0" scrolling="no" tabindex="0" title="Disqus" width="100%" src="./Product Quantizers for k-NN Tutorial Part 1 · Chris McCormick_files/saved_resource.html" style="width: 1px !important; min-width: 100% !important; border: none !important; overflow: hidden !important; height: 998px !important;" horizontalscrolling="no" verticalscrolling="no"></iframe></div>
+  <script>
+  
+      var disqus_config = function () {
+          this.page.url = "http://mccormickml.com/2017/10/13/product-quantizer-tutorial-part-1/"
+          this.page.identifier = "/2017/10/13/product-quantizer-tutorial-part-1/"
+      };
+      
+      var disqus_shortname = 'mccormickml';
+      // var disqus_developer = 1; // Comment out when the site is live
+      var disqus_title      = 'Product Quantizers for k-NN Tutorial Part 1';
+      
+      (function() {  // DON'T EDIT BELOW THIS LINE
+          var d = document, s = d.createElement('script');
+          
+          s.src = '//' + disqus_shortname + '.disqus.com/embed.js';        
+          s.setAttribute('data-timestamp', +new Date());
+          (d.head || d.body).appendChild(s);
+      })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+  
+  
+</article>
+
+
+<aside class="related">
+  <h3>Related posts</h3>
+  <ul class="related-posts">
+    
+      <li>
+        <a href="https://mccormickml.com/2020/10/05/multilingual-bert/">
+          How to Apply BERT to Arabic and Other Languages
+          <small><time datetime="2020-10-05T09:00:00-07:00">05 Oct 2020</time></small>
+        </a>
+      </li>
+    
+      <li>
+        <a href="https://mccormickml.com/2020/07/29/smart-batching-tutorial/">
+          Smart Batching Tutorial - Speed Up BERT Training
+          <small><time datetime="2020-07-29T09:00:00-07:00">29 Jul 2020</time></small>
+        </a>
+      </li>
+    
+      <li>
+        <a href="https://mccormickml.com/2020/07/21/gpu-benchmarks-for-fine-tuning-bert/">
+          GPU Benchmarks for Fine-Tuning BERT
+          <small><time datetime="2020-07-21T09:00:00-07:00">21 Jul 2020</time></small>
+        </a>
+      </li>
+    
+  </ul>
+</aside>
+
+
+      </main>
+      
+      <footer class="footer">
+        <small>
+          © <time datetime="2020-10-13T05:39:02-07:00">2020</time>. All rights reserved.
+        </small>
+      </footer>
+    </div>
+
+    
+     <script>
+       (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+       (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+       m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+       })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+       ga('create', 'UA-76624103-1', 'auto');
+       ga('send', 'pageview');
+     </script>
+    
+  
+
+<iframe style="display: none;" src="./Product Quantizers for k-NN Tutorial Part 1 · Chris McCormick_files/saved_resource(1).html"></iframe></body></html>

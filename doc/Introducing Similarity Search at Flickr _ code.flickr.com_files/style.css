@@ -1,0 +1,11 @@
+/**
+ * Theme Name: Flickr Code (flickr-code)
+ * Description: Theme for the Flickr Code blog
+ * Author: Flickr
+ * Template: twentyeleven
+ */
+
+.flickr-embed {
+  width: 800px;
+  max-width: 100%;
+}
