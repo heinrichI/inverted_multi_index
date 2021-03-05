@@ -1,0 +1,38 @@
+var AV_Messenger = {
+    success: function (title, message) {
+        title = typeof title !== 'undefined' ? title : '';
+        message = typeof message !== 'undefined' ? message : '';
+
+        iziToast.success({
+            title: title,
+            message: message
+        });
+    },
+    info: function (title, message) {
+        title = typeof title !== 'undefined' ? title : '';
+        message = typeof message !== 'undefined' ? message : '';
+
+        iziToast.info({
+            title: title,
+            message: message
+        });
+    },
+    error: function (title, message) {
+        title = typeof title !== 'undefined' ? title : '';
+        message = typeof message !== 'undefined' ? message : '';
+
+        iziToast.error({
+            title: title,
+            message: message
+        });
+    },
+    warning: function (title, message) {
+        title = typeof title !== 'undefined' ? title : '';
+        message = typeof message !== 'undefined' ? message : '';
+
+        iziToast.warning({
+            title: title,
+            message: message
+        });
+    }
+};

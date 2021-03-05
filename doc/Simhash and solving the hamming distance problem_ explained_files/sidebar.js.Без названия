@@ -1,0 +1,391 @@
+(function($) {
+	"use strict";
+	$.widget('av.sidebar', {
+		options: {
+			sel: {
+				floating: '#av-sidebar-floating',
+				banner: '#sidebar_box_banner',
+				adminBar: '#wpadminbar',
+				header: '#header_banner'
+			},
+			minimumMargin: 5,
+			viewabilityTimer: 9000,
+			stripCheckCount: 0,
+			headerFloatingEnabled: false,
+			debug: false
+		},
+
+		_create: function () {
+			var that = this;
+			var o = that.options;
+			// Query for all selectors required.
+			for (var s in o.sel){
+				if(o.sel.hasOwnProperty(s))
+					o.sel[s] = $(o.sel[s]);
+			}
+
+			// Enable Floating Header System and launch first check (recursive)
+			// Only enable if header is actually present
+			if (o.sel.header.length) {
+				o.headerFloatingEnabled = true;
+				this.floatingHeader();
+			}
+
+			// TODO: migliorare quest'euristica?
+			o.sel.sidebar = o.sel.floating.parent();
+			o.sel.main = o.sel.sidebar.prev();
+			if (o.sel.main.length === 0){
+				o.sel.main = o.sel.sidebar.next();
+			}
+			if (!o.sel.sidebar.length || !o.sel.main.length || !o.sel.banner.length){
+				return; // stay preservative!
+			}
+
+			// TODO: questo NON VA BENE nel caso in cui la sidebar sia responsive e allineata in basso...
+			// a) aggiungere controllo iniziale?
+			// b) aggiungere resize "intelligente", qualora sia sotto "height" => "auto"
+			// reset "uncanny" properties
+			o.sel.floating.css({
+				'background-color': o.sel.sidebar.css('background-color'),
+				border: o.sel.sidebar.css('border'),
+				'box-shadow': o.sel.sidebar.css('box-shadow')
+			});
+			// TODO: give margin negative in case of borders, to adjust position...
+			that.compute(true);
+
+			o.sel.sidebar.css({
+				position: 'relative',
+				minHeight: o.sidebarHeight + 'px',
+				'background-color': 'transparent',
+				border: 'none',
+				overflow: 'visible',
+				'box-shadow': 'none'
+			});
+
+			if (! that._canScroll(o)){
+				o.sel.main.css('height', (o.sidebarHeight + o.mainHeight) + 'px');
+				o.mainHeight += o.sidebarHeight;
+			}
+
+			$(window).on('scroll.avSidebar resize.avSidebar', function(){
+				that.redraw();
+			});
+
+			// Link Floating Header System to events
+			$(window).on('scroll.avFloatHeader resize.avFloatHeader', function(){
+				that.floatingHeader();
+			});
+			// ..And disable it after viewability
+			setTimeout(that.closeHeader.bind(that), o.viewabilityTimer);
+
+			function isHidden(){
+				var prefixes = ['webkit','moz','ms','o'];
+
+				// if 'hidden' is natively supported just return it
+				if ('hidden' in document) return document.hidden;
+
+				// otherwise loop over all the known prefixes until we find one
+				for (var i = 0; i < prefixes.length; i++){
+					if ((prefixes[i] + 'Hidden') in document)
+						return document[prefixes[i] + 'Hidden'];
+				}
+
+				// otherwise it's not supported
+				return false;
+			}
+
+			var timerActive = ! isHidden();
+			var v = "visible", h = "hidden";
+			var timeToShow = o.viewabilityTimer;
+			that._viewabilityEnded = false;
+
+			/**
+			 * Tracks active tab/window visibility
+			 * @param evt
+			 */
+			function onchange (evt) {
+				var evtMap = {
+					focus:v, focusin:v, pageshow:v, blur:h, focusout:h, pagehide:h
+				};
+
+				evt = evt || window.event;
+				var newVis;
+				if (evt.type in evtMap){
+					newVis = evtMap[evt.type];
+				} else {
+					newVis = this[h] ? h : v;
+				}
+				timerActive = (newVis !== h);
+			}
+
+			// Standards:
+			if (h in document)
+				document.addEventListener("visibilitychange", onchange);
+			else if ((h = "mozHidden") in document)
+				document.addEventListener("mozvisibilitychange", onchange);
+			else if ((h = "webkitHidden") in document)
+				document.addEventListener("webkitvisibilitychange", onchange);
+			else if ((h = "msHidden") in document)
+				document.addEventListener("msvisibilitychange", onchange);
+			// IE 9 and lower:
+			else if ("onfocusin" in document)
+				document.onfocusin = document.onfocusout = onchange;
+			// All others:
+			else {
+				var aEl = 'addEventListener', aE = 'attachEvent';
+				var evt = document[aEl]? aEl : (document[aE]? aE : null);
+
+				if (evt){
+					document[evt]('pageShow', onchange);
+					document[evt]('pagehide', onchange);
+					document[evt]('focus', onchange);
+					document[evt]('blur', onchange);
+				} else {
+					window.onpageshow = window.onpagehide
+						= window.onfocus = window.onblur = onchange;
+				}
+			}
+			var checkTime = 250;
+			that._vInt = setInterval(function(){
+				if (that.compute(timerActive)) that.redraw();
+
+				var isVisible = that._isElementVisible(o.sel.banner.get(0));
+				// no need to have split seconds...
+				if (! that._viewabilityEnded && timerActive && isVisible){
+					timeToShow -= checkTime;
+					that._viewabilityEnded = timeToShow < 0;
+				}
+			}, checkTime);
+
+			that._lowestScroll = Number.POSITIVE_INFINITY; // good old JS 1.1...
+		},
+
+		/**
+		 * checks if element is at least half visible
+		 * @param el
+		 * @returns {boolean}
+		 * @private
+		 */
+		_isElementVisible: function(el) {
+
+			var rect = el.getBoundingClientRect();
+
+			return (
+				rect.top >= 0 &&
+				rect.left >= 0 &&
+				rect.top + rect.height / 2 <= (window.innerHeight || document.documentElement.clientHeight) && /*or $(window).height() */
+				rect.right <= (window.innerWidth || document.documentElement.clientWidth) /*or $(window).width() */
+			);
+		},
+
+		_canScroll: function(o){
+			o.sbTop = o.sel.sidebar.offset().top;
+			o.mainTop = o.sel.main.offset().top;
+			o.crazyFloat = o.sel.sidebar.css('float') === 'none';
+			return Math.abs(o.sbTop - o.mainTop) <= o.sidebarMarTop && o.mainHeight > o.sidebarHeight && !o.crazyFloat;
+		},
+
+		compute: function(force){
+
+			var that = this;
+			var o = that.options;
+
+			var width = $(window).width();
+
+			if (that._lastWidth === width && !force){
+				return false;
+			}
+
+			o.sel.floating.css({
+				width: o.sel.sidebar.width()+ 'px'
+			});
+			that._lastWidth = width;
+
+			// 1) compute MAIN (article) height (margin included!)
+			o.sidebarMarTop = parseInt(o.sel.sidebar.css('marginTop'));
+			o.sidebarPadTop = parseInt(o.sel.sidebar.css('paddingTop'));
+			o.bannerPadTop =  parseInt(o.sel.banner.css('paddingTop'));
+			o.mainPadTop    = parseInt(o.sel.main.css('paddingTop'));
+
+			// Re-compute heights (takes into account sneaky DOM variations, css anims, ecc.)
+			o.scrollableHeight = o.sel.floating.outerHeight(true);
+
+			o.mainHeight = o.sel.main.outerHeight();
+			o.sidebarHeight = o.sel.sidebar.outerHeight();
+			that._adminBarHeight = o.sel.adminBar.outerHeight();
+
+			o.canScroll = that._canScroll(o);
+
+			o.bannerFixedTop = o.minimumMargin + that._adminBarHeight + o.sidebarMarTop + o.sidebarPadTop + o.bannerPadTop;
+			o.scrollableMin = o.sbTop - o.bannerFixedTop + o.sidebarPadTop;
+			o.scrollableMax = o.sbTop + o.mainHeight - o.scrollableHeight;
+
+			return true;
+		},
+
+		redraw: function() {
+			var that = this;
+			var o = that.options;
+			var _scrollTop = $(window).scrollTop();
+			var scrollablePos = 0;
+
+			if (!o.canScroll) {
+				that._position = '';
+			} else {
+				var scrollMinReached = _scrollTop > o.scrollableMin;
+				var overMax = o.scrollableMax - _scrollTop;
+
+				if (scrollMinReached) {
+					if (overMax > o.bannerFixedTop) {
+						that._position = 'fixed';
+
+						if (!that._viewabilityEnded) {
+							scrollablePos = o.bannerFixedTop;
+						} else {
+							if (that._lowestScroll > _scrollTop) {
+								that._lowestScroll = _scrollTop;
+							}
+							scrollablePos = (that._lowestScroll - _scrollTop) + o.bannerFixedTop;
+						}
+					} else if (!that._viewabilityEnded) {
+						scrollablePos = o.scrollableMax - o.scrollableMin - o.bannerFixedTop + o.sidebarPadTop;
+						that._position = 'absolute';
+					} else {
+						if (that._position !== 'fixed') return; // nothing to do.
+						scrollablePos = (that._lowestScroll - _scrollTop) + o.bannerFixedTop;
+					}
+				} else {
+					that._position = '';
+				}
+
+				if (that._viewabilityEnded) {
+					if (!scrollMinReached) {
+						clearInterval(that._vInt);
+						$(window).off('.avSidebar');
+						o.sel.floating.css({position: '', width: '', top: ''});
+						o.sel.main.css({height: 'auto'});
+						return;
+					}
+				}
+			}
+
+			// Update floating sidebar CSS
+			o.sel.floating.css({position: that._position, top: scrollablePos+'px'});
+		},
+
+		floatingHeader: function() {
+
+			// Get Options
+			var o = this.options;
+
+			// If system enabled
+			if (o.headerFloatingEnabled) {
+
+				// Calculate Header Width and Height and check if it has loaded
+				var frame = o.sel.header.find("div").first().find("iframe");
+				var bw, bh;
+				if (frame.length) {
+					// Mediamond
+					bw = frame.first().width();
+					bh = frame.first().height();
+				} else {
+					// Google Adsense
+					frame = o.sel.header[0].querySelector("iframe");
+					if (frame) {
+						bw = frame.offsetWidth;
+						bh = frame.offsetHeight;
+					}
+				}
+
+				// Check if still loading and stop here (retry in 100ms)
+				if(!bw || !bh) {
+					setTimeout(this.floatingHeader.bind(this), 100);
+					if(o.debug) console.log("[FloatingHeader] BANNER LOADING.. WAITING!");
+					return;
+				}
+
+				// Check if we loaded a strip (980x50) - Check again if this happened
+				// This happens before loading a 728x90 (Leaderboard) or a 970x250 (Masthead)
+				// Check for maximum 20 times (20x100ms = 2sec) before considering it okay
+				if(bw === 980 && bh === 50 && o.stripCheckCount < 20) {
+					o.stripCheckCount++;
+					setTimeout(this.floatingHeader.bind(this), 100);
+					if(o.debug) console.log("[FloatingHeader] BANNER IS 980x50 STRIP! CHECKING AGAIN..");
+					return;
+				}
+
+				// Check if this is now a 728x90 (Leaderboard)
+				// We can slide this format instead of moving the sidebar
+				o.canHeaderSlide = (bw === 728 && bh === 90 && window.innerWidth >= 1280);
+
+				// Get bounding rect of the parent and container height
+				var rect = o.sel.header.parent().get(0).getBoundingClientRect();
+				var headerHeight = o.sel.header.height();
+
+				// Switch on border crossing and floating status
+				if (rect.top < 0 && o.headerStatus !== "floating") {
+					if(o.debug) console.log("[FloatingHeader] DETATCHING HEADER AND FLOATING");
+					o.headerStatus = "floating";
+
+					// Decide if sliding to the side or add the margin to the sidebar
+					if (o.canHeaderSlide) {
+						if (o.sel.header.find("div").first().length) {
+							o.sel.header.find("div").first().css({marginLeft: -388});
+						} else {
+							// Fix for legacy themes and new JS Autopilot INS management - Force to inline-block
+							o.sel.header[0].querySelector("ins").style.display = "inline-block";
+							o.sel.header[0].querySelector("ins").style.marginLeft = "-388px";
+						}
+					} else {
+						o.sel.floating.css({marginTop: headerHeight + 10});
+						if(o.debug) console.log("[FloatingHeader] ADDING THE MARGIN TO SIDEBAR");
+					}
+
+					// Make the header float
+					o.sel.header.addClass("banner_980X50_floating");
+					o.sel.header.parent().height(headerHeight + 20);
+
+				} else if (rect.top >= 0 && o.headerStatus !== "static") {
+					if(o.debug) console.log("[FloatingHeader] STOPPING FLOATING AND DOCKING HEADER");
+					o.headerStatus = "static";
+
+					// Defloat the element and reset page modifications
+					o.sel.header.removeClass("banner_980X50_floating");
+					o.sel.header.find("div").first().css({marginLeft: ""});
+					if (o.sel.header[0].querySelector("ins")) o.sel.header[0].querySelector("ins").style.marginLeft = "";
+					o.sel.header.parent().css({height: ""});
+					o.sel.floating.css({marginTop: ""});
+
+					if (!o.canHeaderSlide && o.debug) console.log("[FloatingHeader] REMOVING THE MARGIN FROM SIDEBAR");
+				}
+			}
+		},
+
+		closeHeader: function () {
+
+			// Get Options
+			var o = this.options;
+			if(o.debug) console.log("[FloatingHeader] CLOSING THE FLOATING HEADER SYSTEM");
+
+			// Close floating if floating
+			if (o.headerStatus === "floating") {
+				var nowHeight = o.sel.header.parent().height();
+				o.sel.header.css({top: -nowHeight});
+				setTimeout(function () {
+					o.sel.header.removeClass("banner_980X50_floating");
+					o.sel.header.find("div").first().css({marginLeft: ""});
+					if (o.sel.header[0].querySelector("ins")) o.sel.header[0].querySelector("ins").style.marginLeft = "";
+					o.sel.header.parent().css({height: ""});
+					o.sel.floating.css({marginTop: ""});
+					o.sel.floating.parent().css({marginTop: ""});
+				}, 200);
+			}
+
+			// Disable reopening
+			o.headerFloatingEnabled = false;
+			$(window).off('.avFloatHeader');
+		}
+
+	});
+	var sidebar = $(document).ready(function(){$(document.body).sidebar()});
+}(jQuery));

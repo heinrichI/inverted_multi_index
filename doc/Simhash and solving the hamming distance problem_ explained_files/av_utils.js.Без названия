@@ -1,0 +1,29 @@
+/*!
+ * av_utils.js utility functions.
+ */
+(function($){
+    $.fn.extend({
+        avTrackEvent: function (params) {
+
+            var eventCategory = params.evtCategory;
+            var eventAction = params.evtAction;
+            var eventLabel = params.evtLabel;
+
+            var ga = window.__gaTracker || window.ga;
+
+            try {
+                if (typeof ga == 'function') {
+                    ga('avTracker.send', $.extend(params.sets, {
+                        'hitType': 'event',
+                        'eventCategory': eventCategory,
+                        'eventAction': eventAction,
+                        'eventLabel': eventLabel,
+			'nonInteraction': !!params.nonInteraction
+                    }));
+                }
+            } catch (e) {
+                console.warn(e);
+            }
+        },
+    });
+}(jQuery));

@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<!-- saved from url=(0093)http://benwhitmore.altervista.org/simhash-and-solving-the-hamming-distance-problem-explained/ -->
+<html lang="en-NZ"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	
+	<meta name="viewport" content="width=device-width">
+	<link rel="profile" href="http://gmpg.org/xfn/11">
+		
+	<!--[if lt IE 9]>
+		<script src="//benwhitmore.altervista.org/_av_share/master/static/wordpress/themes/common/js/html5.js" type="text/javascript"></script>
+	<![endif]-->
+	<title>Simhash and solving the hamming distance problem: explained</title>
+<script type="text/javascript" async="" src="./Simhash and solving the hamming distance problem_ explained_files/js"></script><script type="text/javascript" async="" src="./Simhash and solving the hamming distance problem_ explained_files/recaptcha__ru.js.Без названия" crossorigin="anonymous" integrity="sha384-jyVDHtUW4KWIAn51+tHq/pBaGBofOYEtHQhSlQ7k+TQ1muUEEDTTTenM8hthO3Op"></script><script>!function(w,r,t,i,c,k,q,g){w.GoogleAnalyticsObject=r,g=w[r]=w[r]||function(){(w[r].q=w[r].q||[]).push(arguments)},g.l=+new Date;for(k in t){i=0;while(q=t[k],i<q.length)try{c=q[i++],(c[0]!="create"?(c[0]=="e"?c=eval(c[1]):c)?c[0]=k+"."+c[0]:c:c)&&g.apply(null,c)}catch(e){}}}(self,"__gaTracker",{"avTracker":[["create","UA-1240215-4",{"name":"avTracker"}],["set",{"&aip":true,"&cd4":"computer","&cd6":"http","&cd9":"AllSilver","&cd10":"enabled","&cd11":"manual","&cd2":"master","&cd7":"none","&cd1":"post","&cd5":"desktop: altervista-buone-ricette","transport":"beacon","allowAdFeatures":false}],["send","pageview"]],"avTracker2":[["create","UA-1240215-11",{"name":"avTracker2"}],["set",{"&aip":true,"&cd4":"computer","&cd6":"http","&cd9":"AllSilver","&cd13":"(not set)","&cd10":"enabled","&cd11":"manual","&cd2":"master","&cd7":"none","&cd12":"benwhitmore","&cd1":"post","&cd5":"desktop: altervista-buone-ricette","&an":"WordPress","&av":"5.2.1","&aiid":"PHP 7.1.33","&aid":"wpfe","transport":"beacon","allowAdFeatures":false}]]})</script><script async="" src="./Simhash and solving the hamming distance problem_ explained_files/analytics.js.Без названия"></script>
+<!-- This site is optimized with the Yoast SEO plugin v11.3 - https://yoast.com/wordpress/plugins/seo/ -->
+<meta name="description" content="Simhashes are a clever means of rapidly finding near-identical documents (or other items) within a large corpus, without having to individually compare">
+<link rel="canonical" href="http://benwhitmore.altervista.org/simhash-and-solving-the-hamming-distance-problem-explained/">
+<meta property="og:locale" content="en_US">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Simhash and solving the hamming distance problem: explained">
+<meta property="og:description" content="Simhashes are a clever means of rapidly finding near-identical documents (or other items) within a large corpus, without having to individually compare">
+<meta property="og:url" content="http://benwhitmore.altervista.org/simhash-and-solving-the-hamming-distance-problem-explained/">
+<meta property="og:site_name" content="The Briar">
+<meta property="article:section" content="Algorithms">
+<meta property="article:published_time" content="2019-08-06T14:02:35+00:00">
+<meta property="article:modified_time" content="2019-08-06T14:05:19+00:00">
+<meta property="og:updated_time" content="2019-08-06T14:05:19+00:00">
+<meta property="og:image" content="http://benwhitmore.altervista.org/wp-content/uploads/2019/08/featurehashes-averaged-then-rounded.png">
+<script type="application/ld+json" class="yoast-schema-graph yoast-schema-graph--main">{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"http://benwhitmore.altervista.org/#organization","name":"","url":"http://benwhitmore.altervista.org/","sameAs":[]},{"@type":"WebSite","@id":"http://benwhitmore.altervista.org/#website","url":"http://benwhitmore.altervista.org/","name":"The Briar","publisher":{"@id":"http://benwhitmore.altervista.org/#organization"},"potentialAction":{"@type":"SearchAction","target":"http://benwhitmore.altervista.org/?s={search_term_string}","query-input":"required name=search_term_string"}},{"@type":"WebPage","@id":"http://benwhitmore.altervista.org/simhash-and-solving-the-hamming-distance-problem-explained/#webpage","url":"http://benwhitmore.altervista.org/simhash-and-solving-the-hamming-distance-problem-explained/","inLanguage":"en-NZ","name":"Simhash and solving the hamming distance problem: explained","isPartOf":{"@id":"http://benwhitmore.altervista.org/#website"},"image":{"@type":"ImageObject","@id":"http://benwhitmore.altervista.org/simhash-and-solving-the-hamming-distance-problem-explained/#primaryimage","url":"http://benwhitmore.altervista.org/wp-content/uploads/2019/08/permutation.png","width":1000,"height":188,"caption":"Simhash diagram showing how blocks of F and G are permuted so that differing bits are all at the low end"},"primaryImageOfPage":{"@id":"http://benwhitmore.altervista.org/simhash-and-solving-the-hamming-distance-problem-explained/#primaryimage"},"datePublished":"2019-08-06T14:02:35+00:00","dateModified":"2019-08-06T14:05:19+00:00","description":"Simhashes are a clever means of rapidly finding near-identical documents (or other items) within a large corpus, without having to individually compare"},{"@type":"Article","@id":"http://benwhitmore.altervista.org/simhash-and-solving-the-hamming-distance-problem-explained/#article","isPartOf":{"@id":"http://benwhitmore.altervista.org/simhash-and-solving-the-hamming-distance-problem-explained/#webpage"},"author":{"@id":"http://benwhitmore.altervista.org/author/benwhitmore/#author"},"headline":"Simhash and solving the hamming distance problem: explained","datePublished":"2019-08-06T14:02:35+00:00","dateModified":"2019-08-06T14:05:19+00:00","commentCount":0,"mainEntityOfPage":"http://benwhitmore.altervista.org/simhash-and-solving-the-hamming-distance-problem-explained/#webpage","publisher":{"@id":"http://benwhitmore.altervista.org/#organization"},"image":{"@id":"http://benwhitmore.altervista.org/simhash-and-solving-the-hamming-distance-problem-explained/#primaryimage"},"articleSection":"Algorithms,Programming"},{"@type":["Person"],"@id":"http://benwhitmore.altervista.org/author/benwhitmore/#author","name":"Ben Whitmore","image":{"@type":"ImageObject","@id":"http://benwhitmore.altervista.org/#authorlogo","url":"http://0.gravatar.com/avatar/0e033c94437bf650b2ee5b2d049377e2?s=96&d=blank&r=g","caption":"Ben Whitmore"},"sameAs":[]}]}</script>
+<!-- / Yoast SEO plugin. -->
+
+<link rel="dns-prefetch" href="http://fonts.googleapis.com/">
+<link rel="dns-prefetch" href="http://s.w.org/">
+<link rel="alternate" type="application/rss+xml" title="The Briar » Feed" href="http://benwhitmore.altervista.org/feed/">
+<link rel="alternate" type="application/rss+xml" title="The Briar » Comments Feed" href="http://benwhitmore.altervista.org/comments/feed/">
+<link rel="alternate" type="application/rss+xml" title="The Briar » Simhash and solving the hamming distance problem: explained Comments Feed" href="http://benwhitmore.altervista.org/simhash-and-solving-the-hamming-distance-problem-explained/feed/">
+<link id="av-dist-url" href="http://benwhitmore.altervista.org/_av_share/master/static/wordpress/dist/"><script nomodule="">document.write("<script src=\"https:\/\/polyfill.io\/v3\/polyfill.min.js?flags=gated&features=default,es2016,es2017,fetch\"><\/script><script src=\"\/\/benwhitmore.altervista.org\/_av_share\/master\/static\/wordpress\/dist\/jscompat\/system.js?1604939590\"><\/script><script src=\"\/\/benwhitmore.altervista.org\/_av_share\/master\/static\/wordpress\/dist\/jscompat\/regenerator-runtime.js?1604939590\"><\/script><script>[\"\\\/\\\/benwhitmore.altervista.org\\\/_av_share\\\/master\\\/static\\\/wordpress\\\/dist\\\/jscompat\\\/autopilot.js?1614597047\"].forEach(function(x){System.import(x)})<\/script>");document.addEventListener("beforeload",function(e){e.target.type=="module"&&e.preventDefault()},true)</script><script type="module" async="" src="./Simhash and solving the hamming distance problem_ explained_files/autopilot.js.Без названия"></script><script>adsbyav={};adsbyav.adsenseConsent=false;(adsbygoogle=window.adsbygoogle||[]).requestNonPersonalizedAds=1;!function(){var consentCallbackFunction = function () {window.adsbyav.adsenseConsent = true;(adsbygoogle=window.adsbygoogle||[]).requestNonPersonalizedAds = 0;if(window.__gaTracker){__gaTracker("avTracker.set", "allowAdFeatures", true);}(adsbygoogle=window.adsbygoogle||[]).pauseAdRequests = 0;};try{avRegisterConsentCallback(consentCallbackFunction)}catch(e){}}()</script><style>.av-hide-before-loading-styles{visibility:hidden;overflow:hidden}.av-unrender-before-loading-styles{display:none}
+/*# sourceMappingURL=inhibit-fouc.min.css.map *//*# sourceURL=//benwhitmore.altervista.org/_av_share/master/static/wordpress/dist/css/inhibit-fouc.min.css?1588844450*/</style><style>.hentry .avadvslot{clear:both;margin-top:1em;margin-bottom:1em}.avadvslot{text-align:center}.avadvslot ins.adsbygoogle{all:revert;margin:0 auto}.avadvslot.av-adsense-responsive{--av-adsense-adslot-min-height:83.33333vw;min-height:83.33333vw;min-height:var(--av-adsense-adslot-min-height)}.avadvslot.av-adsense-responsive>.av-adsense-container>.av-adsense-full-width-container{position:absolute;left:0;right:0}@media (min-width:488px){.avadvslot.av-adsense-responsive>.av-adsense-container{position:relative}.avadvslot.av-adsense-responsive{--av-adsense-adslot-min-height:280px;min-height:280px}}
+/*# sourceMappingURL=autopilot.min.css.map *//*# sourceURL=//benwhitmore.altervista.org/_av_share/master/static/wordpress/dist/css/autopilot.min.css?1608039119*/</style>		<script type="text/javascript">
+			window._wpemojiSettings = {"baseUrl":"https:\/\/s.w.org\/images\/core\/emoji\/12.0.0-1\/72x72\/","ext":".png","svgUrl":"https:\/\/s.w.org\/images\/core\/emoji\/12.0.0-1\/svg\/","svgExt":".svg","source":{"concatemoji":"http:\/\/benwhitmore.altervista.org\/wp-includes\/js\/wp-emoji-release.min.js?ver=5.2.1"}};
+			!function(a,b,c){function d(a,b){var c=String.fromCharCode;l.clearRect(0,0,k.width,k.height),l.fillText(c.apply(this,a),0,0);var d=k.toDataURL();l.clearRect(0,0,k.width,k.height),l.fillText(c.apply(this,b),0,0);var e=k.toDataURL();return d===e}function e(a){var b;if(!l||!l.fillText)return!1;switch(l.textBaseline="top",l.font="600 32px Arial",a){case"flag":return!(b=d([55356,56826,55356,56819],[55356,56826,8203,55356,56819]))&&(b=d([55356,57332,56128,56423,56128,56418,56128,56421,56128,56430,56128,56423,56128,56447],[55356,57332,8203,56128,56423,8203,56128,56418,8203,56128,56421,8203,56128,56430,8203,56128,56423,8203,56128,56447]),!b);case"emoji":return b=d([55357,56424,55356,57342,8205,55358,56605,8205,55357,56424,55356,57340],[55357,56424,55356,57342,8203,55358,56605,8203,55357,56424,55356,57340]),!b}return!1}function f(a){var c=b.createElement("script");c.src=a,c.defer=c.type="text/javascript",b.getElementsByTagName("head")[0].appendChild(c)}var g,h,i,j,k=b.createElement("canvas"),l=k.getContext&&k.getContext("2d");for(j=Array("flag","emoji"),c.supports={everything:!0,everythingExceptFlag:!0},i=0;i<j.length;i++)c.supports[j[i]]=e(j[i]),c.supports.everything=c.supports.everything&&c.supports[j[i]],"flag"!==j[i]&&(c.supports.everythingExceptFlag=c.supports.everythingExceptFlag&&c.supports[j[i]]);c.supports.everythingExceptFlag=c.supports.everythingExceptFlag&&!c.supports.flag,c.DOMReady=!1,c.readyCallback=function(){c.DOMReady=!0},c.supports.everything||(h=function(){c.readyCallback()},b.addEventListener?(b.addEventListener("DOMContentLoaded",h,!1),a.addEventListener("load",h,!1)):(a.attachEvent("onload",h),b.attachEvent("onreadystatechange",function(){"complete"===b.readyState&&c.readyCallback()})),g=c.source||{},g.concatemoji?f(g.concatemoji):g.wpemoji&&g.twemoji&&(f(g.twemoji),f(g.wpemoji)))}(window,document,window._wpemojiSettings);
+		</script><script src="./Simhash and solving the hamming distance problem_ explained_files/wp-emoji-release.min.js.Без названия" type="text/javascript" defer=""></script>
+		<style type="text/css">
+img.wp-smiley,
+img.emoji {
+	display: inline !important;
+	border: none !important;
+	box-shadow: none !important;
+	height: 1em !important;
+	width: 1em !important;
+	margin: 0 .07em !important;
+	vertical-align: -0.1em !important;
+	background: none !important;
+	padding: 0 !important;
+}
+</style>
+	<link rel="stylesheet" id="wp-block-library-css" href="./Simhash and solving the hamming distance problem_ explained_files/style.min.css" type="text/css" media="all">
+<link rel="stylesheet" id="av-social-icons-css" href="./Simhash and solving the hamming distance problem_ explained_files/front-end.css" type="text/css" media="all">
+<link rel="stylesheet" id="izitoast-css" href="./Simhash and solving the hamming distance problem_ explained_files/iziToast.min.css" type="text/css" media="all">
+<link rel="stylesheet" id="modern_footnotes-css" href="./Simhash and solving the hamming distance problem_ explained_files/styles.min.css" type="text/css" media="all">
+<link rel="stylesheet" id="av-framework-main-style-css" href="./Simhash and solving the hamming distance problem_ explained_files/desktop-bundle-site-minimal.min.css" type="text/css" media="all">
+<link rel="stylesheet" id="altervista-buone-ricette-css" href="./Simhash and solving the hamming distance problem_ explained_files/style.css" type="text/css" media="all">
+<link rel="stylesheet" id="av-framework-fonts-css" href="./Simhash and solving the hamming distance problem_ explained_files/css" type="text/css" media="all">
+<script type="text/javascript" src="./Simhash and solving the hamming distance problem_ explained_files/jquery.js.Без названия"></script>
+<script type="text/javascript" src="./Simhash and solving the hamming distance problem_ explained_files/jquery-migrate.min.js.Без названия"></script>
+<script type="text/javascript" src="./Simhash and solving the hamming distance problem_ explained_files/iziToast.min.js.Без названия"></script>
+<script type="text/javascript" src="./Simhash and solving the hamming distance problem_ explained_files/av_messenger.js.Без названия"></script>
+<script type="text/javascript" src="./Simhash and solving the hamming distance problem_ explained_files/jquery.flexslider-min.js.Без названия"></script>
+<link rel="https://api.w.org/" href="http://benwhitmore.altervista.org/wp-json/">
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://benwhitmore.altervista.org/xmlrpc.php?rsd">
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://benwhitmore.altervista.org/wp-includes/wlwmanifest.xml"> 
+<meta name="generator" content="WordPress 5.2.1">
+<link rel="shortlink" href="http://benwhitmore.altervista.org/?p=244">
+<link rel="alternate" type="application/json+oembed" href="http://benwhitmore.altervista.org/wp-json/oembed/1.0/embed?url=http%3A%2F%2Fbenwhitmore.altervista.org%2Fsimhash-and-solving-the-hamming-distance-problem-explained%2F">
+<link rel="alternate" type="text/xml+oembed" href="http://benwhitmore.altervista.org/wp-json/oembed/1.0/embed?url=http%3A%2F%2Fbenwhitmore.altervista.org%2Fsimhash-and-solving-the-hamming-distance-problem-explained%2F&amp;format=xml">
+<script>!function(w,r,t,i,c,k,q,g){r=r&&new r(function(a){a.forEach(function(a){void 0==a.isIntersecting&&(r.unobserve(a=a.target),a.dataset.adHostChannel+="+7625673260",a.dataset.adHostChannel+=adsbyav.adsenseConsent?"+1595451531":"+7017091188",k.call(t,{element:a})),a.isIntersecting&&(r.unobserve(a=a.target),a.dataset.adHostChannel+=adsbyav.adsenseConsent?"+1595451531":"+7017091188",k.call(t,{element:a}))})},{rootMargin:"100%"}),w.adsbygoogle=w.adsbygoogle||[],c=function(a){t=a||w.adsbygoogle,k=t.push,t.push=function(a){if(g=a.element){(q=a.params=a.params||{}).google_ad_host!="pub-9280273811890686"&&g.dataset.adHost!="pub-9280273811890686"&&(q.google_ad_host="pub-9280273811890686",q.google_ad_host_channel="9502980924");return k.call(t,a)}i=0,q=document.querySelectorAll("ins.adsbygoogle[data-ad-client]");while(g=q[i++])g.dataset.adHost!="pub-9280273811890686"&&(g.dataset.adHostChannel="4668647526",g.dataset.adHost="pub-9280273811890686"),!g.dataset.avDone&&(g.dataset.avDone=1,g.dataset.adHostChannel=g.dataset.adHostChannel?g.dataset.adHostChannel+"+":"",g.dataset.adHostChannel+=r?"2257821199":"1784066529",r&&r.observe(g));!r&&k.call(t,a)},Object.defineProperty(t,"push",{configurable:0,value:t.push,writable:0})},c(),Object.defineProperty(w,"adsbygoogle",{configurable:0,get:function(a){return t},set:function(a){t!=a&&c(a)}})}(window,window.IntersectionObserver)</script>        <script>
+            window.avadv_wp = 1;
+            window.av_adsense = 'active';
+                                    window.av_mobile = 'active';
+        </script>
+
+        <style type="text/css">
+            @media screen and ( min-width: 800px ) {
+                div#content_middle_banner .banner_altervista_640X5 iframe {
+                    max-height: 90px;
+                    max-width: 100%;
+                }
+            }
+        </style>
+        <script type="text/javascript" src="./Simhash and solving the hamming distance problem_ explained_files/si_captcha.js.Без названия"></script>
+<!-- begin SI CAPTCHA Anti-Spam - login/register form style -->
+<style type="text/css">
+.si_captcha_small { width:175px; height:45px; padding-top:10px; padding-bottom:10px; }
+.si_captcha_large { width:250px; height:60px; padding-top:10px; padding-bottom:10px; }
+img#si_image_com { border-style:none; margin:0; padding-right:5px; float:left; }
+img#si_image_reg { border-style:none; margin:0; padding-right:5px; float:left; }
+img#si_image_log { border-style:none; margin:0; padding-right:5px; float:left; }
+img#si_image_side_login { border-style:none; margin:0; padding-right:5px; float:left; }
+img#si_image_checkout { border-style:none; margin:0; padding-right:5px; float:left; }
+img#si_image_jetpack { border-style:none; margin:0; padding-right:5px; float:left; }
+img#si_image_bbpress_topic { border-style:none; margin:0; padding-right:5px; float:left; }
+.si_captcha_refresh { border-style:none; margin:0; vertical-align:bottom; }
+div#si_captcha_input { display:block; padding-top:15px; padding-bottom:5px; }
+label#si_captcha_code_label { margin:0; }
+input#si_captcha_code_input { width:65px; }
+p#si_captcha_code_p { clear: left; padding-top:10px; }
+.si-captcha-jetpack-error { color:#DC3232; }
+</style>
+<!-- end SI CAPTCHA Anti-Spam - login/register form style -->
+		<style type="text/css">
+					#site-title a,
+			#site-description {
+				color: #565656;
+			}
+				</style>
+		<style type="text/css" id="custom-background-css">
+body.custom-background { background-color: #f2f1ed; }
+</style>
+	
+<style>
+
+/* Altervista Le Buone Ricette - Custom CSS */
+
+
+
+body, button, input, select, textarea,
+.widget-area h1, .widget-area h2, .widget-area h3, .widget-area h4, .widget-area h5, .widget-area h6 {
+	font-family: Cardo;
+}
+
+h1, h2, h3, h4, h5, h6 {
+	font-family: Crimson Text;
+}
+
+.site-title {
+	font-family: Palatino, Palatino Linotype, serif;
+}
+
+.widget-area .widget-title, .category-title {
+	font-family: Crimson Text, cursive;
+}
+
+
+
+.site-title a:hover {
+	color: #0c1fff;
+}
+
+.entry-title a,
+h1.entry-title {
+	color: #3f4eff;
+}
+
+a, .widget a, .entry-content .has-main-color,
+.entry-footer .ei,
+.entry-footer a {
+	color: #000da5;
+}
+
+.widget-title,
+.category-title,
+.category-title a {
+	color: #000da5;
+}
+
+a:hover, .widget a:hover, .category-title a:hover,
+.entry-title a:hover, body.av-dark .entry-title a:hover {
+	color: #3f4eff;
+}
+
+
+.av-model-site-boxed .hentry,
+.av-model-site-boxed .no-results,
+.av-model-site-boxed .navigation,
+.av-model-site-boxed .page-header,
+.av-model-site-boxed .category-title,
+.av-model-site-boxed .comment-form,
+.av-model-site-boxed .comment-list > li.comment {
+	border-color: #e9e8e1;
+}
+
+.av-model-site-paged .post-type-5 .more-link a,
+.av-model-site-minimal .post-type-5 .more-link a {
+	border-color: #000da5;
+}
+
+.av-model-site-boxed .widget,
+.av-model-site-minimal .widget {
+	border-color: #e9e8e1;
+}
+
+.av-model-site-paged .widget {
+	border-color: #727dff;
+}
+
+.widget-title span:before,
+.widget-title span:after,
+.category-title span:before,
+.category-title span:after {
+	border-top-color: #2032ff;
+	border-bottom-color: #4958ff;
+}
+
+.site-footer {
+	border-top-color: #e9e8e1;
+}
+
+
+.entry-content .has-main-background-color,
+.av-model-site-boxed .post-type-5 .more-link a {
+	background-color: #000da5;
+}
+
+button,
+input[type="button"],
+input[type="submit"],
+.comment-reply-link,
+.page-numbers:hover,
+.page-numbers.current,
+.page-numbers.current:hover {
+	background-color: #0c1fff;
+}
+
+button:hover,
+input[type="button"]:hover,
+input[type="submit"]:hover,
+.comment-reply-link:hover {
+	background-color: #3f4eff;
+}
+
+
+.entry-content .has-secondary-color,
+.post-type-3 .cat-links a,
+.post-type-6 .cat-links a {
+	color: #9e4343;
+}
+
+.entry-content .has-secondary-background-color,
+.post-type-featured .cat-links a {
+	background-color: #9e4343;
+}
+
+
+.main-navigation.toggled > ul {
+	background-color: #000da5;
+}
+
+.main-navigation.toggled ul a {
+	color: #fff;
+	border-bottom: 1px solid rgba(255,255,255,.3);
+}
+
+.av-main-color-light .main-navigation.toggled ul a {
+	color: #222;
+	border-bottom: 1px solid rgba(0,0,0,.08);
+}
+
+@media screen and (min-width: 960px) {
+	/* Main Navigation */
+	.av-model-site-minimal .site-title-centered .main-navigation {
+	border-top-color: #e9e8e1;
+	border-bottom-color: #000da5;
+	}
+	.av-model-site-minimal .site-title-centered .main-navigation > ul > li > a {
+	color: #000da5;
+	}
+	.site-title-left .main-navigation ul li:hover > a,
+	.site-title-left .main-navigation .current-menu-item > a,
+	.av-model-site-minimal .site-title-centered .main-navigation > ul > li:hover > a,
+	.av-model-site-minimal .site-title-centered .main-navigation .current-menu-item > a,
+	.av-model-site-minimal .site-title-centered .main-navigation ul ul a:hover {
+	color: #000da5;
+	}
+	.av-model-site-paged .site-title-centered .main-navigation,
+	.av-model-site-boxed .site-title-centered .main-navigation {
+	background-color: #000da5;
+	}
+	.av-model-site-paged .site-title-centered .main-navigation ul ul,
+	.av-model-site-boxed .site-title-centered .main-navigation ul ul,
+	.av-model-site-paged .site-title-centered .main-navigation > ul > li:hover > a,
+	.av-model-site-paged .site-title-centered .main-navigation > ul > li.current-menu-item > a,
+	.av-model-site-boxed .site-title-centered .main-navigation > ul > li:hover > a,
+	.av-model-site-boxed .site-title-centered .main-navigation > ul > li.current-menu-item > a {
+	background-color: #0c1fff;
+	}
+	.av-model-site-paged .site-title-centered .main-navigation ul ul li:hover > a,
+	.av-model-site-boxed .site-title-centered .main-navigation ul ul li:hover > a {
+	background-color: #3f4eff;
+	}
+}
+
+@media screen and (min-width: 1440px) {
+	.av-model-site-paged .widget-area .AV_Facebook_Fanbox_Widget,
+	.av-model-site-paged .widget-area .AlterVista_GoogleAdsense {
+	border-color: #727dff;
+	}
+}
+
+</style>
+
+<link rel="icon" href="http://benwhitmore.altervista.org/favicon.ico" sizes="32x32">
+<link rel="icon" href="http://benwhitmore.altervista.org/favicon.ico" sizes="192x192">
+<link rel="apple-touch-icon-precomposed" href="http://benwhitmore.altervista.org/favicon.ico">
+<meta name="msapplication-TileImage" content="/favicon.ico">
+
+<!-- AlterVista Custom CSS --><style type="text/css">/* Insert Custom CSS here */</style><!-- End AlterVista Custom CSS -->
+		<style type="text/css" id="wp-custom-css">
+			.post-type-3, .hentry, .no-results {margin-bottom:77px}
+h1#site-title.site-title, h2#site-title.site-title {font-size:70px;line-height:1;font-style:italic}
+p#site-description.site-description {font-style:italic;margin-top:-5px;font-size:18px}
+
+.entry-title a, h1.entry-title {color:#333399}
+
+@media screen and (min-width: 720px) {
+.post-type-3 .entry-title {font-size: 27px;}
+	body {font-size:18px}
+.entry-summary{font-size:18px}
+}
+
+.av-credit-link{color:#ccccee}
+.av-credit-link a {color:#ccccee}		</style>
+		<script src="./Simhash and solving the hamming distance problem_ explained_files/script.js.Без названия"></script><script src="./Simhash and solving the hamming distance problem_ explained_files/js(1)"></script><link rel="stylesheet" type="text/css" href="./Simhash and solving the hamming distance problem_ explained_files/toolbar-font.css"><link rel="stylesheet" type="text/css" href="./Simhash and solving the hamming distance problem_ explained_files/toolbar-icons.css"><link rel="stylesheet" type="text/css" href="./Simhash and solving the hamming distance problem_ explained_files/site.css"><style type="text/css"></style></head>
+
+<body class="post-template-default single single-post postid-244 single-format-standard custom-background av-theme-altervista-buone-ricette content-sidebar av-model-site-minimal" style="position: relative; margin-top: 40px;"><div id="av_toolbar_regdiv" style="top: -40px; right: 0px;"><div class="tb-site"><a target="_blank" href="https://en.altervista.org/create-free-blog.php?utm_campaign=toolbar&amp;utm_source=link&amp;utm_medium=link" title="How to create a blog for free" style="color: rgb(255, 255, 255);"><span class="circle"><span class="tb-icons tb-icon-pencil"></span></span>Get a site</a></div></div><iframe id="av_toolbar_iframe" marginwidth="0" marginheight="0" frameborder="0" scrolling="no" style="height: 40px; border: 0px; position: absolute; left: 0px; top: -40px; z-index: 10000; max-width: none; width: calc(100% + 0px);" src="./Simhash and solving the hamming distance problem_ explained_files/t2_benwhitmore.html"></iframe><script>!function(d,e){e=d.createElement("script");e.src="//tb.altervista.org/js/script.js?1";d.head.appendChild(e)}(document)</script>
+
+	
+	<div class="site-container">
+	
+		<div id="page">
+				
+			<header id="site-header" class="site-header ">
+				
+	<div class="site-title-centered">
+		<div class="container">
+			
+			<div class="site-branding">
+															<h2 id="site-title" class="site-title"><span><a href="http://benwhitmore.altervista.org/" rel="home">The Briar</a></span></h2>
+													
+									<p id="site-description" class="site-description">From the mind of Ben Whitmore</p>
+							</div>
+	
+						
+			<nav id="site-navigation" class="main-navigation" role="navigation">
+				<button id="menu-toggle" class="menu-toggle" aria-controls="menu" aria-expanded="false">
+					<span class="button-toggle"></span>
+				</button>
+					<ul class="primary-menu" aria-expanded="false">
+		<li>
+			<a href="http://benwhitmore.altervista.org/" rel="home">Home</a>
+		</li>
+	</ul>
+				</nav>
+			
+		</div>	
+	</div><!-- .site-title-centered -->		
+							
+			</header><!-- #site-header -->
+			
+			<div id="site-content" class="site-content">
+				<div class="container">
+										<div class="row site-inner">
+				
+		
+	<section id="main" class="site-main col-sm-12 col-md-6 col-8">
+		<div class="row">
+			<div id="content" class="content-area col-12" role="main">
+					
+	
+		
+			<article id="post-244" class="post-244 post type-post status-publish format-standard has-post-thumbnail hentry category-algorithms category-programming">
+				<header class="entry-header">
+			<h1 class="entry-title">Simhash and solving the hamming distance problem: explained</h1>
+						<div class="entry-meta">
+				<span class="posted-on"><span class="screen-reader-text"> Posted on </span> <a href="http://benwhitmore.altervista.org/simhash-and-solving-the-hamming-distance-problem-explained/" rel="bookmark"><time class="entry-date published" datetime="2019-08-06T15:02:35+13:00">6 August 2019</time><time class="updated" datetime="2019-08-06T15:05:19+13:00">6 August 2019</time></a></span><span class="byline"> by <span class="author vcard"><a class="url fn n" href="http://benwhitmore.altervista.org/author/benwhitmore/">Ben Whitmore</a></span></span>			</div>
+            		</header> <!-- .entry-header -->
+	
+		<div class="entry-content">
+			<div class="av-social-share av-social-type-text-icon av-social-share-top">
+<div class="av-social-btn av-share-btn av-facebook"><a rel="nofollow" href="https://www.facebook.com/sharer/sharer.php?m2w&amp;s=100&amp;u=http%3A%2F%2Fbenwhitmore.altervista.org%2Fsimhash-and-solving-the-hamming-distance-problem-explained%2F" target="_blank"><span class="av-social-icon"></span><span class="av-social-title">Facebook</span></a></div>
+</div><p>Simhashes are a clever means of rapidly finding near-identical documents (or other items) within a large corpus, without having to individually compare every document to every other document. Using simhashes for any sizable corpus involves two parts: generating the simhash itself, and&nbsp;<em>solving the Hamming distance problem</em>. Neither is much use without the other. Unlike minhashes, the simhash approach doesn’t really allow full <em>similarity detection</em>, because the range of similarity it is sensitive to is so small. It’s better described as&nbsp;<em>near-duplicate detection</em>. Google have patented simhash (though not the Hamming distance solution, as far as I know).</p>
+<p>As well as its other limitations simhash is substantially more complex than minhash and harder to tune. Its real benefit is that it performs way faster than minhash, even on enormous corpuses, and typically requires less storage.</p>
+<h2>Generating the simhash</h2>
+<p>A simhash is a single sequence of bits (usually 64 bits) generated from a set of features in such a way that changing a small fraction of those features will cause the resulting hash to change only a small fraction of its bits; whereas changing all features will cause the resulting hash to look completely different (roughly half its bits will change).</p>
+<p>As with any similarity detection scheme, its success depends on choosing sensible features. Let’s say you’re comparing documents: a typical feature to choose might be <a href="https://en.wikipedia.org/wiki/W-shingling">shingles</a> of words, with whitespacing and case normalized. You might add in other features, such as document title, text styled as headings, and so on.</p>
+<p>Each feature must be hashed using a cheap but good standard (non-cryptographic) hash such as <a href="https://en.wikipedia.org/wiki/Fowler%E2%80%93Noll%E2%80%93Vo_hash_function#FNV-1a_hash">FNV-1a</a>, with the same bit-length as your intended simhash.</p>
+<p>To combine the many feature hashes into a single simhash, you calculate a kind of bitwise average of them all. It’s very simple. Take the first bit of every feature hash and average them. You get some value between 0 and 1. Round that value to 0 if it’s less than 0.5, and otherwise to 1. That gives you the first bit of your simhash. Do the same for the second bit of every feature hash, to yield the second bit of your simhash. And so on.</p>
+<figure id="attachment_289" aria-describedby="caption-attachment-289" style="width: 168px" class="wp-caption alignnone"><img loading="lazy" class="size-full wp-image-289" src="./Simhash and solving the hamming distance problem_ explained_files/featurehashes-averaged-then-rounded.png" alt="" width="168" height="281"><figcaption id="caption-attachment-289" class="wp-caption-text">Feature hashes are combined into a bitwise average, then those averages are rounded to yield the bits of the simhash.</figcaption></figure>
+<p>You can see that changing just one feature hash out of thousands may not change many (or any) bits in the simhash, whereas changing a lot of feature hashes will have a larger effect.</p>
+<p>Comparing two documents for (estimated) similarity is now as simple as determining the Hamming distance between the two simhashes, which can be calculated <a href="https://en.wikipedia.org/wiki/Hamming_weight#Efficient_implementation">very efficiently</a>. Unfortunately, in most situations you don’t need to compare one single document to another single document; you need to compare every document to every other one. Even with such an efficient calculation of hamming distance, to find all near-duplicates in a corpus of 10 million documents would require 10M×(10M-1)/2 = nearly 50 trillion comparisons, which is completely unworkable. This is why simhashing isn’t much use without “solving the hamming distance problem”, described below. The solution to that problem only works for quite small hamming distances: typically 2 to 7 bits difference, depending on your storage capacity, speed requirements and corpus size.</p>
+<p>For this reason, a lot of careful tuning goes into trying to make the simhashes sensitive to those features we consider most important and less sensitive to others. This involves choosing suitable features for hashing and suitable methods of normalizing features (such as lowercasing text and simplifying whitespacing). It also involves giving higher or lower <em>weights</em> to certain features: we thus calculate each bit of the simhash as a (rounded) <a href="https://en.wikipedia.org/wiki/Weighted_arithmetic_mean">weighted average</a>.</p>
+<p>An example of a kind of feature you might want to exclude is advertising text in a webpage. There are some simple tricks for reducing the influence of advertising text, such as only taking shingles that include at least one <a href="https://en.wikipedia.org/wiki/Stop_words">stopword</a> (since advertisements typically contain few stopwords). But you may have to do more complex feature detection.</p>
+<p>The method of calculating a simhash is described in slightly different terms in Google’s patents. As they describe it, you keep a tally for every bit, which starts at zero. For each bit of each feature hash, if it is 1, <em>add</em> that feature’s weight to the corresponding tally; or if it is zero <em>subtract</em> its weight from the tally. From the final tallies, set your simhash bit to 1 where the corresponding tally is &gt;0, otherwise set it to 0. This is illustrated below:</p>
+<figure id="attachment_286" aria-describedby="caption-attachment-286" style="width: 718px" class="wp-caption alignnone"><img loading="lazy" class="size-full wp-image-286" src="./Simhash and solving the hamming distance problem_ explained_files/simhash-as-google-explains-it.png" alt="A document, the features extracted, the feature hashes and summing up the tally for each bit of the simhash" width="718" height="716" srcset="http://benwhitmore.altervista.org/wp-content/uploads/2019/08/simhash-as-google-explains-it.png 718w, http://benwhitmore.altervista.org/wp-content/uploads/2019/08/simhash-as-google-explains-it-150x150.png 150w, http://benwhitmore.altervista.org/wp-content/uploads/2019/08/simhash-as-google-explains-it-320x319.png 320w" sizes="(max-width: 718px) 100vw, 718px"><figcaption id="caption-attachment-286" class="wp-caption-text">In this example features are extracted and turned into weighted hashes; then the weights for each bit of each feature are added (up-arrow) or subtracted (down-arrow) in each bit’s tally. The bits of the simhash are determined by the sign of each of the tally totals. The feature hashes are coloured so you can see how each contributes to the tallies.</figcaption></figure>
+<p>It’s a little more cumbersome to describe the algorithm this way, but it should be clear that it is exactly equivalent to a bitwise rounded weighted average.</p>
+<p>I recommend you keep weights for particular types of feature constant. E.g., don’t weight shingles more highly near the beginning of the document and gradually less and less toward the end. Otherwise relatively small changes in position of text, such as inserting an extra paragraph early in the document, can have a substantial impact on the simhash.</p>
+<p>There’s probably not a lot of choice in the bit-length of your simhashes. I recommend 64 bits. 128 bits would be overkill for almost any purpose, and 32 bits is insufficient for most purposes. Remember that 32 bits only stores a little over 4 billion values, which may sound like a lot, but is ripe for collisions. Let’s say your hash is 32 bits long and k is 4. For any given fingerprint there are 41,449 bit-patterns that are within k bits Hamming distance of it, and any document that happens to have one of those fingerprints as a result of a hash collision will be detected as similar. With a corpus of 100,000 documents you’d already be getting frequent collisions.</p>
+<h2>A word on images</h2>
+<p>Simhash, minhash and the like can be used for detecting similar images, <em>if</em> you choose sensible features to generate your feature hashes from. The features should be derived in such a way that similar images are likely to contain many&nbsp;<em>identical</em> features. This is far from straightforward. Depending on what you want to consider ‘similar’, the features may need to be robust to changes in scale, orientation, colour balance, blur/sharpness, etc.</p>
+<p>You may want to treat images embedded in a document as features of that document, and generate simple binary hashes of them (as in the example above). If you do so, be aware that any change, visible or otherwise, will result in a different feature hash.</p>
+<h2>Solving the Hamming distance problem</h2>
+<p>Now comes the really clever bit, that relieves us of having to individually compare every simhash with every other simhash in order to find all duplicates in the corpus. This is what saves us from performing 50 trillion Hamming distance calculations to deduplicate our corpus of 10 million documents! The explanation in Google’s <a class="external-link" href="http://www2007.org/papers/paper215.pdf" rel="nofollow">paper</a> is difficult to follow, and I couldn’t find a simpler explanation, so I’m creating one here. I’ll stick to the original paper’s terminology and notation, to avoid confusion.</p>
+<p>Let’s say we’re a Google web crawler, and we find a new document with fingerprint (simhash) F. It so happens that we’ve previously encountered another document with a very similar fingerprint G that differs by at most k=3 bits.</p>
+<figure id="attachment_260" aria-describedby="caption-attachment-260" style="width: 1000px" class="wp-caption alignnone"><img loading="lazy" class="wp-image-260 size-full" src="./Simhash and solving the hamming distance problem_ explained_files/F.png" alt="Fingerprint F" width="1000" height="16" srcset="http://benwhitmore.altervista.org/wp-content/uploads/2019/08/F.png 1000w, http://benwhitmore.altervista.org/wp-content/uploads/2019/08/F-320x5.png 320w, http://benwhitmore.altervista.org/wp-content/uploads/2019/08/F-768x12.png 768w, http://benwhitmore.altervista.org/wp-content/uploads/2019/08/F-720x12.png 720w" sizes="(max-width: 1000px) 100vw, 1000px"><figcaption id="caption-attachment-260" class="wp-caption-text">Fingerprint F: generated from our incoming document</figcaption></figure>
+<figure id="attachment_257" aria-describedby="caption-attachment-257" style="width: 1000px" class="wp-caption alignnone"><img loading="lazy" class="wp-image-257 size-full" src="./Simhash and solving the hamming distance problem_ explained_files/G.png" alt="Fingerprint G" width="1000" height="16" srcset="http://benwhitmore.altervista.org/wp-content/uploads/2019/08/G.png 1000w, http://benwhitmore.altervista.org/wp-content/uploads/2019/08/G-320x5.png 320w, http://benwhitmore.altervista.org/wp-content/uploads/2019/08/G-768x12.png 768w, http://benwhitmore.altervista.org/wp-content/uploads/2019/08/G-720x12.png 720w" sizes="(max-width: 1000px) 100vw, 1000px"><figcaption id="caption-attachment-257" class="wp-caption-text">Fingerprint G: from a previously-encountered document</figcaption></figure>
+<figure id="attachment_255" aria-describedby="caption-attachment-255" style="width: 1000px" class="wp-caption alignnone"><img loading="lazy" class="wp-image-255 size-full" style="color: #222222; font-weight: bold; font-size: 1rem;" src="./Simhash and solving the hamming distance problem_ explained_files/F-diff-bits.png" alt="Differing bits highlighted" width="1000" height="16" srcset="http://benwhitmore.altervista.org/wp-content/uploads/2019/08/F-diff-bits.png 1000w, http://benwhitmore.altervista.org/wp-content/uploads/2019/08/F-diff-bits-320x5.png 320w, http://benwhitmore.altervista.org/wp-content/uploads/2019/08/F-diff-bits-768x12.png 768w, http://benwhitmore.altervista.org/wp-content/uploads/2019/08/F-diff-bits-720x12.png 720w" sizes="(max-width: 1000px) 100vw, 1000px"><figcaption id="caption-attachment-255" class="wp-caption-text">Only 3 bits differ between the two.</figcaption></figure>
+<div>
+<p><span style="font-size: 1rem;">If we divide the 64 bits into 6 blocks, we know that the differing bits can occur in no more than 3 of those blocks:</span></p>
+</div>
+<p><img loading="lazy" class="alignnone size-full wp-image-259" src="./Simhash and solving the hamming distance problem_ explained_files/differing-bits-in-6-blocks.png" alt="" width="1000" height="16" srcset="http://benwhitmore.altervista.org/wp-content/uploads/2019/08/differing-bits-in-6-blocks.png 1000w, http://benwhitmore.altervista.org/wp-content/uploads/2019/08/differing-bits-in-6-blocks-320x5.png 320w, http://benwhitmore.altervista.org/wp-content/uploads/2019/08/differing-bits-in-6-blocks-768x12.png 768w, http://benwhitmore.altervista.org/wp-content/uploads/2019/08/differing-bits-in-6-blocks-720x12.png 720w" sizes="(max-width: 1000px) 100vw, 1000px"></p>
+<p>We can then permute these 6 blocks so that the three blocks containing differing bits all move into the low-order bits:</p>
+<p><img loading="lazy" class="alignnone size-full wp-image-270" src="./Simhash and solving the hamming distance problem_ explained_files/permutation.png" alt="Diagram showing how blocks of F and G are permuted so that differing bits are all at the low end" width="1000" height="188" srcset="http://benwhitmore.altervista.org/wp-content/uploads/2019/08/permutation.png 1000w, http://benwhitmore.altervista.org/wp-content/uploads/2019/08/permutation-320x60.png 320w, http://benwhitmore.altervista.org/wp-content/uploads/2019/08/permutation-768x144.png 768w, http://benwhitmore.altervista.org/wp-content/uploads/2019/08/permutation-720x135.png 720w" sizes="(max-width: 1000px) 100vw, 1000px"></p>
+<p>The permuted F we’ll call F′, and the permuted G we’ll call G′. Notice that in the first 3 blocks (totalling 32 bits), F′ and G′ are identical.</p>
+<p>Now, we have kept a table of the permuted hashes of all the documents we’ve previously encountered. All the hashes in that table have had exactly the same permutation applied, and the table is <em>sorted</em>. That means that all the permuted hashes that share their first 32 bits with our permuted fingerprint F′ are in a single contiguous section of the table, and we can find them rapidly using binary search, or even more efficiently, interpolation search.</p>
+<p>Once we’ve found permuted hashes that share the first 32 bits, we still need to compare the low order bits to determine total Hamming distance. Then we’ve found our similar documents.</p>
+<p>“Wait!”, I hear you say. The permutation we’ve chosen may work for this example, but what about all the other fingerprints whose 1, 2 or 3 differing bits fall in different blocks? Well, that’s why we actually store 20 such tables, each with a different permutation, so that in each table a different combination of 3 blocks is pushed into the low bits. COMB(6,3) = 20. When we look for similar fingerprints to F, we’ll have to generate 20 different permutations of it and search in each of the 20 tables.</p>
+<figure id="attachment_265" aria-describedby="caption-attachment-265" style="width: 844px" class="wp-caption alignnone"><img loading="lazy" class="size-full wp-image-265" src="./Simhash and solving the hamming distance problem_ explained_files/20-permuted-tables.png" alt="20 permuted tables" width="844" height="273" srcset="http://benwhitmore.altervista.org/wp-content/uploads/2019/08/20-permuted-tables.png 844w, http://benwhitmore.altervista.org/wp-content/uploads/2019/08/20-permuted-tables-320x104.png 320w, http://benwhitmore.altervista.org/wp-content/uploads/2019/08/20-permuted-tables-768x248.png 768w, http://benwhitmore.altervista.org/wp-content/uploads/2019/08/20-permuted-tables-720x233.png 720w" sizes="(max-width: 844px) 100vw, 844px"><figcaption id="caption-attachment-265" class="wp-caption-text">Permutation schemes for 20 different tables to push different blocks into the low-end bits</figcaption></figure>
+<p>But let’s return to F′ and G′ and this particular permuted table. Interpolation search has yielded a set of candidates that we have to calculate Hamming distance on. That’s a fairly cheap operation, but still could be time-consuming if there are a lot of candidates. So how many candidates should we expect, on average?</p>
+<p>Well, Google indexes around 8 billion documents, which is roughly 2<sup>34</sup>. So our table contains around 2<sup>34</sup> fingerprints. On average there will be just one document that shares the highest 34 bits with F′, or 4 that share the highest 32 bits (since 2<sup>34-32</sup> = 4). So on average, we’ll only have to calculate hamming distance for 4 candidates (within this table). Nice!</p>
+<p>There’s another way to explain this: Imagine we have 2<sup>34</sup> truly random fingerprints, in sorted order. If we take just the first 34 bits of these fingerprints (shaded green below), they will amount to ‘almost a counter’, since most of the possible numbers will be represented and only a minority of possible numbers will be repeated. If we take just the least significant 30 bits, though, they will look “almost random”.</p>
+<figure id="attachment_269" aria-describedby="caption-attachment-269" style="width: 1000px" class="wp-caption alignnone"><img loading="lazy" class="size-full wp-image-269" src="./Simhash and solving the hamming distance problem_ explained_files/almost-a-counter.png" alt="A small section of the permuted table showing how the high bits are almost a counter, and the low bits appear virtually random" width="1000" height="188" srcset="http://benwhitmore.altervista.org/wp-content/uploads/2019/08/almost-a-counter.png 1000w, http://benwhitmore.altervista.org/wp-content/uploads/2019/08/almost-a-counter-320x60.png 320w, http://benwhitmore.altervista.org/wp-content/uploads/2019/08/almost-a-counter-768x144.png 768w, http://benwhitmore.altervista.org/wp-content/uploads/2019/08/almost-a-counter-720x135.png 720w" sizes="(max-width: 1000px) 100vw, 1000px"><figcaption id="caption-attachment-269" class="wp-caption-text">A small section of the table. The upper 34 bits in green are ‘almost a counter’. The lower 30 bits appear virtually random. And there’s G′ with its differing bits highlighted.</figcaption></figure>
+<p>But we’re only matching the first 32 bits, so we find on average 4 candidates per query.</p>
+<p><img loading="lazy" class="alignnone size-full wp-image-273" src="./Simhash and solving the hamming distance problem_ explained_files/34-bits-needed-to-be-almost-a-counter.png" alt="Three blocks are not quite &#39;almost a counter&#39;" width="1000" height="57" srcset="http://benwhitmore.altervista.org/wp-content/uploads/2019/08/34-bits-needed-to-be-almost-a-counter.png 1000w, http://benwhitmore.altervista.org/wp-content/uploads/2019/08/34-bits-needed-to-be-almost-a-counter-320x18.png 320w, http://benwhitmore.altervista.org/wp-content/uploads/2019/08/34-bits-needed-to-be-almost-a-counter-768x44.png 768w, http://benwhitmore.altervista.org/wp-content/uploads/2019/08/34-bits-needed-to-be-almost-a-counter-720x41.png 720w" sizes="(max-width: 1000px) 100vw, 1000px"></p>
+<p>Because 64 isn’t evenly divisible by 6, our blocks are 11, 11, 11, 11, 10 and 10 bits wide. That means our different tables will need to be searched with different numbers of high-end bits: 31, 32 or 33 depending on the permutation, yielding 8, 4 or 2 candidates on average.</p>
+<p>By performing this same cheap search on each of the 20 tables we can be certain we have found every fingerprint that differs by at most k=3 bits.</p>
+<h3>Storing the tables</h3>
+<p>For fast response, tables should be held in main memory. Each of the permuted tables should store&nbsp;<em>only</em> permuted hashes, and a separate table should contain mappings from the unpermuted hashes back to document IDs.</p>
+<p>The most compact storage for the hash tables is as a sorted list (and Google’s paper describes how to further compress the table). If you want to insert new entries as you go then you’ll need trees (quite a bit more storage required), or else you could keep most entries in sorted lists and new entries in trees and check both, and periodically merge the trees back into the sorted lists.</p>
+<p>If you don’t have to detect similarities as soon as new documents arrive, there are nice efficiencies to be gained. Not only can you store the tables as more compact sorted lists, you can also find all similarities in a single pass through all tables, by just finding every group of hashes permuted hashes that shares the first d bits, and checking their Hamming distances.</p>
+<p>In Google’s <a class="external-link" href="http://www2007.org/papers/paper215.pdf" rel="nofollow">paper</a> they recommend a means of compacting a sorted list still further, exploiting the fact that many of the high-end bits don’t change much from one entry to the next. I’ve never bothered with this, but if you’re really struggling with storage, bear it in mind.</p>
+<h3>Other configurations</h3>
+<p>Aside from the 6-block configuration discussed above, there are other configurations that give different memory/processing trade-offs with k=3. For instance, 4 blocks (of 16 bits each) requires only 4 permuted tables (since COMB(4,3) = 4).</p>
+<figure id="attachment_274" aria-describedby="caption-attachment-274" style="width: 1000px" class="wp-caption alignnone"><img loading="lazy" class="size-full wp-image-274" src="./Simhash and solving the hamming distance problem_ explained_files/4-blocks-of-16.png" alt="4 blocks of 16" width="1000" height="57" srcset="http://benwhitmore.altervista.org/wp-content/uploads/2019/08/4-blocks-of-16.png 1000w, http://benwhitmore.altervista.org/wp-content/uploads/2019/08/4-blocks-of-16-320x18.png 320w, http://benwhitmore.altervista.org/wp-content/uploads/2019/08/4-blocks-of-16-768x44.png 768w, http://benwhitmore.altervista.org/wp-content/uploads/2019/08/4-blocks-of-16-720x41.png 720w" sizes="(max-width: 1000px) 100vw, 1000px"><figcaption id="caption-attachment-274" class="wp-caption-text">Four blocks of 16 bits each, with k = 3</figcaption></figure>
+<p>Given there are only 16 bits we are doing the table search on, we can expect on average 2<sup>34-16</sup> = 262,144 results per query for each table, or about a million hamming checks per query overall.</p>
+<p>In the example above, we match on 16 bits, leaving 48 non-match bits. We could further subdivide each table, by splitting the 48 non-match bits into 4 blocks of 12 bits each and permuting them in turn, for a total of 16 tables:</p>
+<p><img loading="lazy" class="alignnone size-full wp-image-277" src="./Simhash and solving the hamming distance problem_ explained_files/4-blocks-further-subdivided.png" alt="4 blocks of 16 bits, with the non-match bits further subdivided into 4 blocks of 12 bits" width="1000" height="276" srcset="http://benwhitmore.altervista.org/wp-content/uploads/2019/08/4-blocks-further-subdivided.png 1000w, http://benwhitmore.altervista.org/wp-content/uploads/2019/08/4-blocks-further-subdivided-320x88.png 320w, http://benwhitmore.altervista.org/wp-content/uploads/2019/08/4-blocks-further-subdivided-768x212.png 768w, http://benwhitmore.altervista.org/wp-content/uploads/2019/08/4-blocks-further-subdivided-720x199.png 720w" sizes="(max-width: 1000px) 100vw, 1000px"></p>
+<p>Now we can match on the first 28 bits, using 16 tables and getting on average 2<sup>34-28</sup>&nbsp;= 64 results per query.</p>
+<p>There are several such table variants described in Google’s paper, each offering a different trade-off between number of tables required, and average number of candidate matches per query.</p>
+<p>Many applications won’t need to index 2<sup>34</sup> documents, and could increase k a little. For instance, let’s say you only expect to index around 2<sup>23</sup> (~8 million) documents. You could readily increase the possible Hamming distance up to k = 6, by dividing the hash into 8 blocks (28 tables). On average you’d be getting 128 candidates per query for each table, meaning you’d have to perform about 3,500 hamming distance checks in total per query.</p>
+<figure id="attachment_282" aria-describedby="caption-attachment-282" style="width: 1000px" class="wp-caption alignnone"><img loading="lazy" class="wp-image-282 size-full" src="./Simhash and solving the hamming distance problem_ explained_files/an-example-for-k6-and-d23.png" alt="An example permutation scheme for k=6 and d=23" width="1000" height="57" srcset="http://benwhitmore.altervista.org/wp-content/uploads/2019/08/an-example-for-k6-and-d23.png 1000w, http://benwhitmore.altervista.org/wp-content/uploads/2019/08/an-example-for-k6-and-d23-320x18.png 320w, http://benwhitmore.altervista.org/wp-content/uploads/2019/08/an-example-for-k6-and-d23-768x44.png 768w, http://benwhitmore.altervista.org/wp-content/uploads/2019/08/an-example-for-k6-and-d23-720x41.png 720w" sizes="(max-width: 1000px) 100vw, 1000px"><figcaption id="caption-attachment-282" class="wp-caption-text">An example permutation scheme to detect hamming distances of up to 6 bits, which would still be reasonably efficient for a corpus of 8 million documents.</figcaption></figure>
+<p>You will need to find a table arrangement that works best for you. Decide on the bit-length of your simhashes; test the simhashes you produce from your documents to determine how many bits of Hamming distance you need to allow (k); and determine how large your corpus is expected to grow and thus how many bits would be “almost a counter”. Then you can figure out a suitable permutation scheme that balances storage size against processing time.</p>
+<p>If you find that you need to detect more bits difference than this approach can accommodate, you are probably looking for full <em>similarity detection</em> rather than&nbsp;<em>near-duplicate detection</em>, and should investigate algorithms such as minhash.</p>
+					</div> <!-- .entry-content -->
+	
+		<footer class="entry-footer clearfix">
+			<span class="category-links"><span class="ei icon-folder"></span> <a href="http://benwhitmore.altervista.org/category/algorithms/" rel="category tag">Algorithms</a>, <a href="http://benwhitmore.altervista.org/category/programming/" rel="category tag">Programming</a></span>			
+					</footer><!-- .entry-footer -->
+		
+	</article><!-- #post-244 -->
+	
+		<div id="nav-single" class="navigation post-navigation">
+						
+							<a class="post-prev" href="http://benwhitmore.altervista.org/song-solomon/">
+					<span class="icon-font icon-angle-left"></span>
+					<em>Previous Entries</em>
+					<strong>The Song of Solomon: a frank translation</strong>
+				</a>
+						
+							<a class="post-next" href="http://benwhitmore.altervista.org/covid-19-ozone-therapy-notes/">
+					<span class="icon-font icon-angle-right"></span>
+					<em>Next Entries</em>
+					<strong>COVID-19 Ozone Therapy notes</strong>
+				</a>
+					</div>
+	
+		
+
+	<div id="comments" class="comments-area">
+		
+				
+			<div id="respond" class="comment-respond">
+		<h3 id="reply-title" class="comment-reply-title">Leave a Reply <small><a rel="nofollow" id="cancel-comment-reply-link" href="http://benwhitmore.altervista.org/simhash-and-solving-the-hamming-distance-problem-explained/#respond" style="display:none;">Cancel reply</a></small></h3>			<form action="http://benwhitmore.altervista.org/wp-comments-post.php" method="post" id="commentform" class="comment-form" novalidate="">
+				<p class="comment-form-comment"><label for="comment">Comment</label> <textarea id="comment" name="comment" cols="45" rows="8" maxlength="65525" required="required"></textarea></p><p class="comment-form-author"><label for="author">Name <span class="required">*</span></label> <input id="author" name="author" type="text" value="" size="30" maxlength="245" required="required"></p>
+<p class="comment-form-email"><label for="email">Email <span class="required">*</span></label> <input id="email" name="email" type="email" value="" size="30" maxlength="100" aria-describedby="email-notes" required="required"></p>
+<p class="comment-form-url"><label for="url">Website</label> <input id="url" name="url" type="url" value="" size="30" maxlength="200"></p>
+<p class="comment-form-cookies-consent"><input id="wp-comment-cookies-consent" name="wp-comment-cookies-consent" type="checkbox" value="yes"><label for="wp-comment-cookies-consent">Save my name, email, and website in this browser for the next time I comment.</label></p>
+<div class="g-recaptcha" data-sitekey="6LeyKZIUAAAAALjNzIpBvxs65ToCb-L_wBlVrU5n"><div style="width: 304px; height: 78px;"><div><iframe src="./Simhash and solving the hamming distance problem_ explained_files/anchor.html" width="304" height="78" role="presentation" name="a-7ntwwye30vxp" frameborder="0" scrolling="no" sandbox="allow-forms allow-popups allow-same-origin allow-scripts allow-top-navigation allow-modals allow-popups-to-escape-sandbox"></iframe></div><textarea id="g-recaptcha-response" name="g-recaptcha-response" class="g-recaptcha-response" style="width: 250px; height: 40px; border: 1px solid rgb(193, 193, 193); margin: 10px 25px; padding: 0px; resize: none; display: none;"></textarea></div><iframe style="display: none;" src="./Simhash and solving the hamming distance problem_ explained_files/saved_resource.html"></iframe></div><script src="./Simhash and solving the hamming distance problem_ explained_files/api.js.Без названия" async="" defer=""></script><p class="form-submit"><input name="submit" type="submit" id="submit" class="submit" value="Post Comment"> <input type="hidden" name="comment_post_ID" value="244" id="comment_post_ID">
+<input type="hidden" name="comment_parent" id="comment_parent" value="0">
+</p><p style="display: none;"><input type="hidden" id="akismet_comment_nonce" name="akismet_comment_nonce" value="0fc00fb9e1"></p><p style="display: none;"></p>			<input type="hidden" id="ak_js" name="ak_js" value="1614691635901"></form>
+			</div><!-- #respond -->
+	<p class="akismet_comment_form_privacy_notice">This site uses Akismet to reduce spam. <a href="https://akismet.com/privacy/" target="_blank" rel="nofollow noopener">Learn how your comment data is processed</a>.</p>	
+	</div><!-- .comments-area -->
+	
+				</div><!-- end #content -->
+					</div>
+	</section>
+		
+
+	<div id="sidebar-primary" class="widget-area sidebar-primary col-sm-12 col-md-6 col-4" role="complementary">
+
+		<div id="av-sidebar-floating">
+					
+					
+				<aside id="archives" class="widget widget_archive">
+					<h3 class="widget-title"><span>Archives</span></h3>
+					<ul>
+							<li><a href="http://benwhitmore.altervista.org/2020/06/">June 2020</a></li>
+	<li><a href="http://benwhitmore.altervista.org/2020/04/">April 2020</a></li>
+	<li><a href="http://benwhitmore.altervista.org/2019/08/">August 2019</a></li>
+	<li><a href="http://benwhitmore.altervista.org/2018/07/">July 2018</a></li>
+	<li><a href="http://benwhitmore.altervista.org/2015/11/">November 2015</a></li>
+	<li><a href="http://benwhitmore.altervista.org/2014/11/">November 2014</a></li>
+	<li><a href="http://benwhitmore.altervista.org/2014/09/">September 2014</a></li>
+	<li><a href="http://benwhitmore.altervista.org/2014/08/">August 2014</a></li>
+					</ul>
+				</aside>
+		
+				<aside id="meta" class="widget widget_meta">
+					<h3 class="widget-title"><span>Meta</span></h3>
+					<ul>
+												<li><a rel="nofollow" href="http://benwhitmore.altervista.org/wp-login.php">Log in</a></li>
+											</ul>
+				</aside>
+		
+					</div>
+	
+	</div> <!-- end #sidebar-primary -->						
+					</div><!-- .row -->
+				</div><!-- .container -->
+			</div><!-- #site-content -->
+		
+			<footer id="site-footer" class="site-footer">
+				<div class="container">
+					
+					
+		            <script id="av-script-data-common" type="application/json">{"accountId":"benwhitmore"}</script><script id="av-script-data-main_global_tracking" type="application/json">{"params":{"cd4":"computer","cd6":"http","cd9":"AllSilver","cd13":"(not set)","cd10":"enabled","cd11":"manual","cd2":"master","cd7":"none","cd12":"benwhitmore","cd1":"post","cd5":"desktop: altervista-buone-ricette","an":"WordPress","av":"5.2.1","aiid":"PHP 7.1.33","aid":"wpfe","tid":"UA-1240215-11","t":"pageview"},"settings":[]}</script><script type="text/javascript" src="./Simhash and solving the hamming distance problem_ explained_files/av_utils.js.Без названия"></script>
+<script type="text/javascript" src="./Simhash and solving the hamming distance problem_ explained_files/social.js.Без названия"></script>
+<script type="text/javascript" src="./Simhash and solving the hamming distance problem_ explained_files/modern-footnotes.min.js.Без названия"></script>
+<script type="text/javascript" src="./Simhash and solving the hamming distance problem_ explained_files/comment-reply.min.js.Без названия"></script>
+<script type="text/javascript" src="./Simhash and solving the hamming distance problem_ explained_files/navigation.js.Без названия"></script>
+<script type="text/javascript" src="./Simhash and solving the hamming distance problem_ explained_files/widget.min.js.Без названия"></script>
+<script type="text/javascript" src="./Simhash and solving the hamming distance problem_ explained_files/sidebar.js.Без названия"></script>
+<script type="text/javascript" src="./Simhash and solving the hamming distance problem_ explained_files/wp-embed.min.js.Без названия"></script>
+<script async="async" type="text/javascript" src="./Simhash and solving the hamming distance problem_ explained_files/form.js.Без названия"></script>
+<script>setInterval(function(){__gaTracker("send","event","HeartBeat","30s")},30000)</script><p class="av-credit-link" style="position:relative;font-size:11px;clear:both;text-align:center;padding: 10px 0!important;width:100%; margin: 0 !important;"><a rel="nofollow" href="https://en.altervista.org/" title="Create a website for free and earn from it">Create a website and earn with Altervista</a> - <a rel="nofollow" href="https://en.altervista.org/disclaimer.php">Disclaimer</a> - <a rel="nofollow" href="https://en.altervista.org/contacts.php#abuse">Report Abuse</a></p>		            
+				</div>
+			</footer><!-- .site-footer -->
+			
+		</div><!-- .page-container -->
+	</div><!-- .site-container -->
+
+<div style="background-color: rgb(255, 255, 255); border: 1px solid rgb(204, 204, 204); box-shadow: rgba(0, 0, 0, 0.2) 2px 2px 3px; position: absolute; transition: visibility 0s linear 0.3s, opacity 0.3s linear 0s; opacity: 0; visibility: hidden; z-index: 2000000000; left: 0px; top: -10000px;"><div style="width: 100%; height: 100%; position: fixed; top: 0px; left: 0px; z-index: 2000000000; background-color: rgb(255, 255, 255); opacity: 0.05;"></div><div class="g-recaptcha-bubble-arrow" style="border: 11px solid transparent; width: 0px; height: 0px; position: absolute; pointer-events: none; margin-top: -11px; z-index: 2000000000;"></div><div class="g-recaptcha-bubble-arrow" style="border: 10px solid transparent; width: 0px; height: 0px; position: absolute; pointer-events: none; margin-top: -10px; z-index: 2000000000;"></div><div style="z-index: 2000000000; position: relative;"><iframe title="проверка recaptcha" src="./Simhash and solving the hamming distance problem_ explained_files/bframe.html" name="c-7ntwwye30vxp" frameborder="0" scrolling="no" sandbox="allow-forms allow-popups allow-same-origin allow-scripts allow-top-navigation allow-modals allow-popups-to-escape-sandbox" style="width: 100%; height: 100%;"></iframe></div></div></body></html>
